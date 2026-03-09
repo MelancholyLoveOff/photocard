@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ZAP48 - Photocard Studio</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Roboto:wght@400;500;700;900&family=Patrick+Hand&family=Caveat&family=Indie+Flower&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+    
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+    <style>
+        :root { 
+            --primary: #8ACE00; 
+            --black: #000000; 
+            --bg: #f4f4f4; 
+            --border: 2px solid #000; 
+            --shadow: 4px 4px 0px #000; 
+            --radius: 16px; 
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        
+        body { 
+            background-color: var(--bg); 
+            color: var(--black); 
+            font-family: 'Roboto', sans-serif; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+            padding: 20px; 
+        }
+
+        h1, h2, h3, label, .font-head { 
+            font-family: 'Montserrat', sans-serif; 
+            font-weight: 900; 
+            text-transform: uppercase; 
+            letter-spacing: -0.5px; 
+        }
+
+        .header-logo { 
+            font-size: 2rem; 
+            font-weight: 900; 
+            font-style: italic; 
+            margin-bottom: 20px; 
+            text-align: center; 
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+        }
+        
+        .header-logo span { color: var(--primary); }
+        .header-subtitle { display: block; font-size: 1rem; color: #555; font-style: normal; margin-top: -5px;}
+
+        .studio-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        /* Painel de Controles Estilo ZAP48 */
+        .controls {
+            background: #fff;
+            border: var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 25px 20px;
+            width: 100%;
+            max-width: 350px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label { 
+            display: block; 
+            font-size: 0.75rem; 
+            color: #555; 
+            margin-bottom: 2px; 
+        }
+
+        input[type="text"], input[type="file"], select, input[type="range"] { 
+            width: 100%; 
+            padding: 10px; 
+            border: var(--border); 
+            border-radius: 8px; 
+            font-family: inherit; 
+            font-weight: 700; 
+            font-size: 0.9rem; 
+            background: #fafafa; 
+            transition: 0.2s; 
+            cursor: pointer;
+        }
+
+        input[type="text"]:focus, select:focus { 
+            background: #fff; 
+            border-color: var(--primary); 
+        }
+
+        /* Ajuste para o input color */
+        input[type="color"] {
+            border: var(--border);
+            border-radius: 8px;
+            height: 40px;
+            padding: 2px;
+            cursor: pointer;
+            background: #fff;
+        }
+
+        button { 
+            background: var(--primary); 
+            color: var(--black); 
+            border: var(--border); 
+            padding: 12px; 
+            border-radius: 8px; 
+            font-weight: 900; 
+            font-size: 1rem; 
+            width: 100%; 
+            cursor: pointer; 
+            box-shadow: 2px 2px 0 #000; 
+            text-transform: uppercase; 
+            transition: transform 0.1s; 
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        button:active { 
+            transform: scale(0.98); 
+            box-shadow: 0 0 0 #000; 
+        }
+
+        .btn-download { 
+            background: var(--black); 
+            color: var(--primary); 
+            margin-top: 10px; 
+            font-size: 1.1rem; 
+            padding: 15px;
+        }
+
+        .stickers-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .sticker-btn {
+            background: #fff;
+            font-size: 20px;
+            padding: 5px;
+            border-radius: 8px;
+            box-shadow: 2px 2px 0 #000;
+        }
+
+        hr {
+            border: 0;
+            border-top: 2px dashed #ccc;
+            margin: 5px 0;
+        }
+
+        /* Área do Photocard */
+        .preview-area {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .photocard {
+            width: 320px;
+            height: 480px;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            /* Aplicando a sombra estética no card também */
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.1); 
+            transition: all 0.3s ease;
+        }
+
+        /* Molduras Base */
+        .frame-polaroid { border-radius: 5px; padding: 15px 15px 60px 15px; border: var(--border); }
+        .frame-kpop { border-radius: var(--radius); padding: 0; border: 8px solid white; box-shadow: var(--shadow); }
+        .frame-dark { border-radius: var(--radius); padding: 0; border: 8px solid #222; background: #222; }
+
+        .photo-container {
+            width: 100%;
+            height: 100%;
+            border-radius: inherit;
+            overflow: hidden;
+            position: relative;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #555;
+            font-weight: bold;
+            border: 1px solid #ccc;
+        }
+
+        .photo {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transform-origin: center;
+        }
+
+        .frame-overlay-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            pointer-events: none;
+            z-index: 5;
+            display: none;
+        }
+
+        /* Elementos Arrastáveis */
+        .draggable {
+            position: absolute;
+            cursor: grab;
+            user-select: none;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .draggable:active {
+            cursor: grabbing;
+        }
+
+        /* Controles de UI nos Stickers (Adaptado pra estética) */
+        .ui-controls {
+            position: absolute;
+            top: -20px;
+            right: -40px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            opacity: 0;
+            transition: 0.2s;
+        }
+
+        .draggable:hover .ui-controls {
+            opacity: 1;
+        }
+
+        .btn-action {
+            background: #fff;
+            color: #000;
+            border: 2px solid #000;
+            border-radius: 4px;
+            width: 24px;
+            height: 24px;
+            font-size: 16px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 2px 2px 0 rgba(0,0,0,1);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .btn-action:active {
+            transform: scale(0.9);
+            box-shadow: 0 0 0 rgba(0,0,0,1);
+        }
+
+        .btn-action.delete { background: #ff4d4d; color: white;}
+        
+        .hide-for-print .ui-controls {
+            display: none !important;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="header-logo">
+        ZAP<span>48</span>
+        <span class="header-subtitle">Photocard Studio</span>
+    </div>
+
+    <div class="studio-container">
+        
+        <aside class="controls">
+            
+            <div class="control-group">
+                <label>📸 Foto Base</label>
+                <input type="file" id="upload" accept="image/*">
+            </div>
+
+            <div class="control-group">
+                <label>🔍 Zoom da Foto</label>
+                <input type="range" id="photoZoom" min="0.5" max="3" step="0.1" value="1">
+            </div>
+
+            <div class="control-group">
+                <label>🖼️ Formato do Card</label>
+                <select id="frameSelect">
+                    <option value="frame-kpop">K-Pop Album (Borda Branca)</option>
+                    <option value="frame-polaroid">Polaroid Clássica</option>
+                    <option value="frame-dark">Dark Mode (Borda Preta)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label>🎀 Moldura Transparente (PNG)</label>
+                <input type="file" id="uploadFrame" accept="image/png, image/webp, image/gif">
+            </div>
+
+            <hr>
+
+            <div class="control-group">
+                <label>✍️ Adicionar Texto</label>
+                <input type="text" id="inputText" placeholder="Sua mensagem...">
+            </div>
+
+            <div class="control-group" style="flex-direction: row; gap: 10px;">
+                <input type="color" id="textColor" value="#8ACE00" style="width: 50px;">
+                <select id="fontSelect" style="flex: 1;">
+                    <option value="'Patrick Hand'">Patrick Hand</option>
+                    <option value="'Caveat'">Caveat</option>
+                    <option value="'Indie Flower'">Indie Flower</option>
+                    <option value="'Shadows Into Light'">Shadows Into Light</option>
+                    <option value="'Montserrat'">Montserrat (Forte)</option>
+                </select>
+            </div>
+            <button onclick="addText()">+ Inserir Texto</button>
+
+            <hr>
+
+            <div class="control-group">
+                <label>⭐ Imagem como Sticker</label>
+                <input type="file" id="uploadSticker" accept="image/*">
+            </div>
+
+            <div class="control-group">
+                <label>💖 Stickers Rápidos</label>
+                <div class="stickers-row">
+                    <button class="sticker-btn" onclick="addStickerText('💖')">💖</button>
+                    <button class="sticker-btn" onclick="addStickerText('✨')">✨</button>
+                    <button class="sticker-btn" onclick="addStickerText('🌸')">🌸</button>
+                    <button class="sticker-btn" onclick="addStickerText('🎀')">🎀</button>
+                </div>
+            </div>
+
+            <button class="btn-download" onclick="downloadCard()">💾 Baixar Photocard</button>
+
+        </aside>
+
+        <section class="preview-area">
+            <div id="photocard" class="photocard frame-kpop">
+                <div class="photo-container">
+                    <span id="placeholder-text">Sua foto aqui</span>
+                    <div id="photo" class="photo" style="display: none;"></div>
+                </div>
+                
+                <div id="frameOverlay" class="frame-overlay-img"></div>
+                <div id="elements-container"></div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        const photocard = document.getElementById('photocard');
+        const elementsContainer = document.getElementById('elements-container');
+        const photoDiv = document.getElementById('photo');
+
+        document.getElementById('upload').addEventListener('change', function(e) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                photoDiv.style.backgroundImage = `url(${reader.result})`;
+                photoDiv.style.display = 'block';
+                document.getElementById('placeholder-text').style.display = 'none';
+                document.getElementById('photoZoom').value = 1; 
+                photoDiv.style.transform = 'scale(1)';
+            }
+            if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+        });
+
+        document.getElementById('photoZoom').addEventListener('input', function(e) {
+            photoDiv.style.transform = `scale(${e.target.value})`;
+        });
+
+        document.getElementById('frameSelect').addEventListener('change', function() {
+            photocard.className = 'photocard ' + this.value;
+        });
+
+        document.getElementById('uploadFrame').addEventListener('change', function(e) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                const frameOverlay = document.getElementById('frameOverlay');
+                frameOverlay.style.backgroundImage = `url(${reader.result})`;
+                frameOverlay.style.display = 'block';
+            }
+            if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+        });
+
+        document.getElementById('uploadSticker').addEventListener('change', function(e) {
+            const reader = new FileReader();
+            reader.onload = function() { addStickerImage(reader.result); }
+            if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+            this.value = ''; 
+        });
+
+        function addText() {
+            const textValue = document.getElementById('inputText').value;
+            if (!textValue) return;
+
+            const color = document.getElementById('textColor').value;
+            const font = document.getElementById('fontSelect').value;
+
+            const el = createDraggableElement(textValue, false);
+            const contentSpan = el.querySelector('.content-span');
+            contentSpan.style.color = color;
+            contentSpan.style.fontFamily = font;
+            // Efeito de contorno branco pro texto não sumir em fundos escuros
+            contentSpan.style.textShadow = "2px 2px 0px #fff, -2px -2px 0px #fff, 2px -2px 0px #fff, -2px 2px 0px #fff";
+            
+            elementsContainer.appendChild(el);
+            document.getElementById('inputText').value = '';
+        }
+
+        function addStickerText(emoji) {
+            const el = createDraggableElement(emoji, false, true);
+            elementsContainer.appendChild(el);
+        }
+
+        function addStickerImage(src) {
+            const el = createDraggableElement(src, true);
+            elementsContainer.appendChild(el);
+        }
+
+        function createDraggableElement(content, isImage = false, isEmoji = false) {
+            const div = document.createElement('div');
+            div.className = 'draggable';
+            div.dataset.isImage = isImage;
+            
+            let contentHtml = '';
+            if(isImage) {
+                contentHtml = `<img src="${content}" class="content-img" style="width: 100px; pointer-events: none;">`;
+            } else {
+                let defaultSize = isEmoji ? '45px' : '32px';
+                contentHtml = `<span class="content-span" style="font-size: ${defaultSize};">${content}</span>`;
+            }
+
+            div.innerHTML = `
+                ${contentHtml}
+                <div class="ui-controls">
+                    <div class="btn-action delete" onclick="this.closest('.draggable').remove()">X</div>
+                    <div class="btn-action" onclick="resizeEl(this, 1)">+</div>
+                    <div class="btn-action" onclick="resizeEl(this, -1)">-</div>
+                </div>
+            `;
+            
+            makeDraggable(div);
+            return div;
+        }
+
+        function resizeEl(btn, direction) {
+            const draggable = btn.closest('.draggable');
+            const isImage = draggable.dataset.isImage === 'true';
+            
+            if(isImage) {
+                const img = draggable.querySelector('.content-img');
+                let currentWidth = parseInt(img.style.width);
+                let newWidth = currentWidth + (direction * 15);
+                if (newWidth > 20) img.style.width = newWidth + 'px';
+            } else {
+                const span = draggable.querySelector('.content-span');
+                let currentSize = parseInt(span.style.fontSize);
+                let newSize = currentSize + (direction * 5);
+                if (newSize > 10) span.style.fontSize = newSize + 'px';
+            }
+        }
+
+        function makeDraggable(element) {
+            let isDragging = false;
+            let startX, startY, initialLeft, initialTop;
+
+            const startDrag = (e) => {
+                if(e.target.classList.contains('btn-action')) return; 
+                
+                isDragging = true;
+                const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+                const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+
+                const rect = element.getBoundingClientRect();
+                const parentRect = photocard.getBoundingClientRect();
+                
+                element.style.transform = 'none';
+                element.style.left = (rect.left - parentRect.left) + 'px';
+                element.style.top = (rect.top - parentRect.top) + 'px';
+
+                startX = clientX;
+                startY = clientY;
+                initialLeft = parseFloat(element.style.left) || 0;
+                initialTop = parseFloat(element.style.top) || 0;
+            };
+
+            const drag = (e) => {
+                if (!isDragging) return;
+                e.preventDefault(); 
+                
+                const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+                const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
+
+                const dx = clientX - startX;
+                const dy = clientY - startY;
+
+                element.style.left = `${initialLeft + dx}px`;
+                element.style.top = `${initialTop + dy}px`;
+            };
+
+            const stopDrag = () => { isDragging = false; };
+
+            element.addEventListener('mousedown', startDrag);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', stopDrag);
+            element.addEventListener('touchstart', startDrag, {passive: false});
+            document.addEventListener('touchmove', drag, {passive: false});
+            document.addEventListener('touchend', stopDrag);
+        }
+
+        function downloadCard() {
+            photocard.classList.add('hide-for-print');
+
+            html2canvas(photocard, {
+                scale: 3, 
+                backgroundColor: null,
+                useCORS: true 
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'zap48-photocard.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                photocard.classList.remove('hide-for-print');
+            });
+        }
+    </script>
+</body>
+</html>
