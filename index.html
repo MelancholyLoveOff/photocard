@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ZAP48 - Photocard Studio</title>
 
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Roboto:wght@400;500;700;900&family=Patrick+Hand&family=Caveat&family=Indie+Flower&family=Shadows+Into+Light&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Roboto:wght@400;500;700;900&family=Kalam:wght@400;700&family=Delius&family=Homemade+Apple&family=Tangerine:wght@400;700&family=Amatic+SC:wght@700&family=Patrick+Hand&family=Just+Another+Hand&family=Rouge+Script&family=Pacifico&family=Great+Vibes&family=Sacramento&family=Parisienne&family=Dancing+Script:wght@700&family=Permanent+Marker&family=Caveat+Brush&family=Kaushan+Script&family=Rock+Salt&family=Gochi+Hand&family=Cabin+Sketch:wght@700&family=Fredericka+the+Great&family=Love+Ya+Like+A+Sister&family=Walter+Turncoat&family=Delicious+Handrawn&display=swap" rel="stylesheet">
     
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
@@ -32,7 +32,7 @@
             padding: 20px; 
         }
 
-        h1, h2, h3, label, .font-head { 
+        h1, h2, h3, .font-head { 
             font-family: 'Montserrat', sans-serif; 
             font-weight: 900; 
             text-transform: uppercase; 
@@ -61,7 +61,7 @@
             width: 100%;
         }
 
-        /* Painel de Controles Estilo ZAP48 */
+        /* Painel de Controles */
         .controls {
             background: #fff;
             border: var(--border);
@@ -84,8 +84,10 @@
         label { 
             display: block; 
             font-size: 0.75rem; 
+            font-weight: 900;
             color: #555; 
             margin-bottom: 2px; 
+            text-transform: uppercase;
         }
 
         input[type="text"], input[type="file"], select, input[type="range"] { 
@@ -101,12 +103,22 @@
             cursor: pointer;
         }
 
+        select optgroup {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 900;
+            background: #eee;
+        }
+
+        select option {
+            background: #fff;
+            font-weight: normal;
+        }
+
         input[type="text"]:focus, select:focus { 
             background: #fff; 
             border-color: var(--primary); 
         }
 
-        /* Ajuste para o input color */
         input[type="color"] {
             border: var(--border);
             border-radius: 8px;
@@ -114,6 +126,15 @@
             padding: 2px;
             cursor: pointer;
             background: #fff;
+            width: 100%;
+        }
+
+        /* Ajuste do checkbox */
+        input[type="checkbox"] {
+            width: auto;
+            height: auto;
+            cursor: pointer;
+            accent-color: var(--primary);
         }
 
         button { 
@@ -165,7 +186,7 @@
             margin: 5px 0;
         }
 
-        /* Área do Photocard */
+        /* --- ÁREA DO PHOTOCARD --- */
         .preview-area {
             display: flex;
             justify-content: center;
@@ -174,19 +195,55 @@
 
         .photocard {
             width: 320px;
-            height: 480px;
-            background: white;
             position: relative;
             overflow: hidden;
-            /* Aplicando a sombra estética no card também */
             box-shadow: 8px 8px 0px rgba(0,0,0,0.1); 
             transition: all 0.3s ease;
+            background-color: #ffffff;
         }
 
-        /* Molduras Base */
-        .frame-polaroid { border-radius: 5px; padding: 15px 15px 60px 15px; border: var(--border); }
-        .frame-kpop { border-radius: var(--radius); padding: 0; border: 8px solid white; box-shadow: var(--shadow); }
-        .frame-dark { border-radius: var(--radius); padding: 0; border: 8px solid #222; background: #222; }
+        /* Molduras Originais */
+        .frame-polaroid { 
+            height: auto; 
+            border-radius: 4px; 
+            padding: 20px 20px 90px 20px; 
+            border: var(--border); 
+        }
+        .frame-polaroid .photo-container {
+            height: 280px; 
+            border-radius: 2px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .frame-kpop { height: 480px; border-radius: var(--radius); padding: 0; border: 8px solid white; box-shadow: var(--shadow); }
+        .frame-dark { height: 480px; border-radius: var(--radius); padding: 0; border: 8px solid #222; background-color: #222 !important; }
+
+        /* MOLDURAS NOVAS */
+        .frame-pastel { 
+            height: 480px; 
+            border-radius: var(--radius); 
+            padding: 0; 
+            border: 8px solid #ffb7b2; 
+            box-shadow: var(--shadow); 
+            background-color: #e2f0cb; 
+        }
+        
+        .frame-gradient {
+            height: 480px;
+            border-radius: var(--radius);
+            padding: 8px; 
+            background: linear-gradient(45deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            box-shadow: var(--shadow);
+        }
+
+        .frame-holographic {
+            height: 480px;
+            border-radius: var(--radius);
+            padding: 8px;
+            background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3);
+            background-size: 400% 400%;
+            box-shadow: var(--shadow);
+        }
 
         .photo-container {
             width: 100%;
@@ -200,7 +257,6 @@
             justify-content: center;
             color: #555;
             font-weight: bold;
-            border: 1px solid #ccc;
         }
 
         .photo {
@@ -240,11 +296,8 @@
             z-index: 10;
         }
 
-        .draggable:active {
-            cursor: grabbing;
-        }
+        .draggable:active { cursor: grabbing; }
 
-        /* Controles de UI nos Stickers (Adaptado pra estética) */
         .ui-controls {
             position: absolute;
             top: -20px;
@@ -256,9 +309,7 @@
             transition: 0.2s;
         }
 
-        .draggable:hover .ui-controls {
-            opacity: 1;
-        }
+        .draggable:hover .ui-controls { opacity: 1; }
 
         .btn-action {
             background: #fff;
@@ -277,16 +328,9 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-        .btn-action:active {
-            transform: scale(0.9);
-            box-shadow: 0 0 0 rgba(0,0,0,1);
-        }
-
+        .btn-action:active { transform: scale(0.9); box-shadow: 0 0 0 rgba(0,0,0,1); }
         .btn-action.delete { background: #ff4d4d; color: white;}
-        
-        .hide-for-print .ui-controls {
-            display: none !important;
-        }
+        .hide-for-print .ui-controls { display: none !important; }
 
     </style>
 </head>
@@ -304,20 +348,29 @@
             <div class="control-group">
                 <label>📸 Foto Base</label>
                 <input type="file" id="upload" accept="image/*">
+                <input type="range" id="photoZoom" min="0.5" max="3" step="0.1" value="1" style="margin-top: 5px;">
             </div>
 
-            <div class="control-group">
-                <label>🔍 Zoom da Foto</label>
-                <input type="range" id="photoZoom" min="0.5" max="3" step="0.1" value="1">
-            </div>
+            <hr>
 
             <div class="control-group">
-                <label>🖼️ Formato do Card</label>
-                <select id="frameSelect">
-                    <option value="frame-kpop">K-Pop Album (Borda Branca)</option>
-                    <option value="frame-polaroid">Polaroid Clássica</option>
-                    <option value="frame-dark">Dark Mode (Borda Preta)</option>
+                <label>🖼️ Formato e Cor do Card</label>
+                <select id="frameSelect" style="margin-bottom: 5px;">
+                    <optgroup label="Originais">
+                        <option value="frame-polaroid">Polaroid Clássica (Quadrada)</option>
+                        <option value="frame-kpop">K-Pop Album (Retrato Branco)</option>
+                        <option value="frame-dark">Dark Mode (Borda Preta)</option>
+                    </optgroup>
+                    <optgroup label="Novas Molduras">
+                        <option value="frame-pastel">Kawaii Pastel (Rosa e Verde)</option>
+                        <option value="frame-gradient">Sunset Gradient (Rosa/Laranja)</option>
+                        <option value="frame-holographic">Holográfica Especial</option>
+                    </optgroup>
                 </select>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <label style="margin:0; font-size: 0.7rem;">Cor Fundo/Borda:</label>
+                    <input type="color" id="cardBgColor" value="#ffffff" style="flex: 1; height: 35px;">
+                </div>
             </div>
 
             <div class="control-group">
@@ -328,19 +381,63 @@
             <hr>
 
             <div class="control-group">
-                <label>✍️ Adicionar Texto</label>
-                <input type="text" id="inputText" placeholder="Sua mensagem...">
-            </div>
+                <label>✍️ Fonte, Texto e Borda</label>
+                <select id="fontSelect" style="margin-bottom: 5px; font-size: 1rem;">
+                    
+                    <optgroup label="✨ Assinatura de Idol (Elegantes)">
+                        <option value="'Pacifico'" style="font-family: 'Pacifico'">Pacifico (Casual/Amigável)</option>
+                        <option value="'Great Vibes'" style="font-family: 'Great Vibes'">Estilo Autography (Assinatura)</option>
+                        <option value="'Parisienne'" style="font-family: 'Parisienne'">Estilo Brittany (Celebridade)</option>
+                        <option value="'Sacramento'" style="font-family: 'Sacramento'">Estilo Amsterdam (Moderna)</option>
+                        <option value="'Dancing Script'" style="font-family: 'Dancing Script'">Estilo Hello Honey (Suave)</option>
+                        <option value="'Rouge Script'" style="font-family: 'Rouge Script'">Rouge Script (Clássica)</option>
+                    </optgroup>
 
-            <div class="control-group" style="flex-direction: row; gap: 10px;">
-                <input type="color" id="textColor" value="#8ACE00" style="width: 50px;">
-                <select id="fontSelect" style="flex: 1;">
-                    <option value="'Patrick Hand'">Patrick Hand</option>
-                    <option value="'Caveat'">Caveat</option>
-                    <option value="'Indie Flower'">Indie Flower</option>
-                    <option value="'Shadows Into Light'">Shadows Into Light</option>
-                    <option value="'Montserrat'">Montserrat (Forte)</option>
+                    <optgroup label="🖌️ Estilo Pincel / Marker (K-Pop)">
+                        <option value="'Caveat Brush'" style="font-family: 'Caveat Brush'">Estilo Brusher (Pincel Forte)</option>
+                        <option value="'Permanent Marker'" style="font-family: 'Permanent Marker'">Estilo Playlist (Música/Pop)</option>
+                        <option value="'Kaushan Script'" style="font-family: 'Kaushan Script'">Estilo Selima (Artístico)</option>
+                        <option value="'Rock Salt'" style="font-family: 'Rock Salt'">Estilo Bromello (Brush Moderno)</option>
+                        <option value="'Gochi Hand'" style="font-family: 'Gochi Hand'">Estilo Wild Youth (Divertido)</option>
+                    </optgroup>
+
+                    <optgroup label="🧑‍🏫 Estilo Giz / Quadro">
+                        <option value="'Cabin Sketch'" style="font-family: 'Cabin Sketch'">Estilo Eraser (Lousa Clássica)</option>
+                        <option value="'Fredericka the Great'" style="font-family: 'Fredericka the Great'">Estilo Chalktastic (Escolar)</option>
+                        <option value="'Love Ya Like A Sister'" style="font-family: 'Love Ya Like A Sister'">Estilo KG Second (Desenhada)</option>
+                        <option value="'Delicious Handrawn'" style="font-family: 'Delicious Handrawn'">Estilo Chalkboard (Crayon)</option>
+                    </optgroup>
+
+                    <optgroup label="✍️ Clássicas e Manuscritas">
+                        <option value="'Kalam'" style="font-family: 'Kalam'">Kalam (Realista)</option>
+                        <option value="'Delius'" style="font-family: 'Delius'">Delius (Quadrinhos)</option>
+                        <option value="'Homemade Apple'" style="font-family: 'Homemade Apple'">Homemade Apple</option>
+                        <option value="'Tangerine'" style="font-family: 'Tangerine'">Tangerine</option>
+                        <option value="'Amatic SC'" style="font-family: 'Amatic SC'">Amatic SC</option>
+                        <option value="'Patrick Hand'" style="font-family: 'Patrick Hand'">Patrick Hand</option>
+                        <option value="'Just Another Hand'" style="font-family: 'Just Another Hand'">Just Another Hand</option>
+                        <option value="'Montserrat'" style="font-family: 'Montserrat'">Montserrat (Oficial ZAP48)</option>
+                    </optgroup>
+                    
                 </select>
+                
+                <input type="text" id="inputText" placeholder="Escreva algo...">
+                
+                <div style="display: flex; gap: 10px; margin-top: 5px;">
+                    <div style="flex:1;">
+                        <label style="font-size: 0.65rem;">Cor Letra:</label>
+                        <input type="color" id="textColor" value="#8ACE00">
+                    </div>
+                    <div style="flex:1;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
+                            <label style="font-size: 0.65rem; margin:0;">Cor Borda:</label>
+                            <label style="font-size: 0.6rem; margin:0; text-transform: none; display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                                <input type="checkbox" id="noOutline"> Sem borda
+                            </label>
+                        </div>
+                        <input type="color" id="textOutlineColor" value="#000000">
+                    </div>
+                </div>
             </div>
             <button onclick="addText()">+ Inserir Texto</button>
 
@@ -352,7 +449,6 @@
             </div>
 
             <div class="control-group">
-                <label>💖 Stickers Rápidos</label>
                 <div class="stickers-row">
                     <button class="sticker-btn" onclick="addStickerText('💖')">💖</button>
                     <button class="sticker-btn" onclick="addStickerText('✨')">✨</button>
@@ -366,7 +462,7 @@
         </aside>
 
         <section class="preview-area">
-            <div id="photocard" class="photocard frame-kpop">
+            <div id="photocard" class="photocard frame-polaroid">
                 <div class="photo-container">
                     <span id="placeholder-text">Sua foto aqui</span>
                     <div id="photo" class="photo" style="display: none;"></div>
@@ -384,6 +480,7 @@
         const elementsContainer = document.getElementById('elements-container');
         const photoDiv = document.getElementById('photo');
 
+        // FOTO E ZOOM
         document.getElementById('upload').addEventListener('change', function(e) {
             const reader = new FileReader();
             reader.onload = function() {
@@ -400,10 +497,20 @@
             photoDiv.style.transform = `scale(${e.target.value})`;
         });
 
+        // TROCAR MOLDURA E COR DE FUNDO
         document.getElementById('frameSelect').addEventListener('change', function() {
             photocard.className = 'photocard ' + this.value;
         });
 
+        document.getElementById('cardBgColor').addEventListener('input', function(e) {
+            photocard.style.backgroundColor = e.target.value;
+            // Muda a cor da borda do kpop se quiserem combinar
+            if(photocard.classList.contains('frame-kpop') || photocard.classList.contains('frame-pastel')) {
+                photocard.style.borderColor = e.target.value;
+            }
+        });
+
+        // MOLDURA PINTEREST
         document.getElementById('uploadFrame').addEventListener('change', function(e) {
             const reader = new FileReader();
             reader.onload = function() {
@@ -414,6 +521,7 @@
             if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
         });
 
+        // IMAGEM STICKER
         document.getElementById('uploadSticker').addEventListener('change', function(e) {
             const reader = new FileReader();
             reader.onload = function() { addStickerImage(reader.result); }
@@ -421,19 +529,32 @@
             this.value = ''; 
         });
 
+        // TEXTOS COM E SEM BORDA
         function addText() {
             const textValue = document.getElementById('inputText').value;
             if (!textValue) return;
 
             const color = document.getElementById('textColor').value;
+            const outlineColor = document.getElementById('textOutlineColor').value;
             const font = document.getElementById('fontSelect').value;
+            const noOutline = document.getElementById('noOutline').checked;
 
             const el = createDraggableElement(textValue, false);
             const contentSpan = el.querySelector('.content-span');
             contentSpan.style.color = color;
             contentSpan.style.fontFamily = font;
-            // Efeito de contorno branco pro texto não sumir em fundos escuros
-            contentSpan.style.textShadow = "2px 2px 0px #fff, -2px -2px 0px #fff, 2px -2px 0px #fff, -2px 2px 0px #fff";
+            
+            // Aplica ou remove a borda baseada na checkbox
+            if(!noOutline) {
+                contentSpan.style.textShadow = `
+                    -2px -2px 0 ${outlineColor}, 2px -2px 0 ${outlineColor}, 
+                    -2px 2px 0 ${outlineColor}, 2px 2px 0 ${outlineColor},
+                    0px 2px 0 ${outlineColor}, 2px 0px 0 ${outlineColor}, 
+                    0px -2px 0 ${outlineColor}, -2px 0px 0 ${outlineColor}
+                `;
+            } else {
+                contentSpan.style.textShadow = "none";
+            }
             
             elementsContainer.appendChild(el);
             document.getElementById('inputText').value = '';
@@ -449,6 +570,7 @@
             elementsContainer.appendChild(el);
         }
 
+        // DRAG AND DROP E REDIMENSIONAR
         function createDraggableElement(content, isImage = false, isEmoji = false) {
             const div = document.createElement('div');
             div.className = 'draggable';
@@ -458,8 +580,8 @@
             if(isImage) {
                 contentHtml = `<img src="${content}" class="content-img" style="width: 100px; pointer-events: none;">`;
             } else {
-                let defaultSize = isEmoji ? '45px' : '32px';
-                contentHtml = `<span class="content-span" style="font-size: ${defaultSize};">${content}</span>`;
+                let defaultSize = isEmoji ? '45px' : '40px'; 
+                contentHtml = `<span class="content-span" style="font-size: ${defaultSize}; white-space: nowrap;">${content}</span>`;
             }
 
             div.innerHTML = `
