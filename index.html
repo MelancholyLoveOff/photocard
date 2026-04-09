@@ -1,715 +1,393 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ZAP48 - Photocard Studio</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Melancholy Love - Post Generator</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,900;1,900&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Roboto:wght@400;500;700;900&family=Kalam:wght@400;700&family=Delius&family=Homemade+Apple&family=Tangerine:wght@400;700&family=Amatic+SC:wght@700&family=Patrick+Hand&family=Just+Another+Hand&family=Rouge+Script&family=Pacifico&family=Great+Vibes&family=Sacramento&family=Parisienne&family=Dancing+Script:wght@700&family=Permanent+Marker&family=Caveat+Brush&family=Kaushan+Script&family=Rock+Salt&family=Gochi+Hand&family=Cabin+Sketch:wght@700&family=Fredericka+the+Great&family=Love+Ya+Like+A+Sister&family=Walter+Turncoat&family=Delicious+Handrawn&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    /* --- TEMA CUTE & EMO (Pastel Goth / Punk Neobrutalism) --- */
+    :root {
+      --color-melancholy-love: #FF69B4; 
+      --color-love: #E60000;            
+      --color-melancholy: #8A2BE2;      
+      
+      --primary: var(--color-melancholy-love); 
+      --primary-light: #FFB6C1;     
+      --black: #111111; 
+      --white: #ffffff; 
+      --bg: #FFF0F5;
+      
+      --border: 3px solid var(--black); 
+      --border-dashed: 3px dashed var(--black);
+      --shadow: 5px 5px 0px var(--black); 
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
     
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    body { 
+      background-color: #333; /* Fundo escuro para a área de trabalho */
+      font-family: 'Roboto', sans-serif; 
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    
+    h1, h2, h3, h4, .font-head { font-family: 'Montserrat', sans-serif; font-weight: 900; text-transform: uppercase; letter-spacing: -0.5px; font-style: italic; }
 
-    <style>
-        :root { 
-            --primary: #8ACE00; 
-            --black: #000000; 
-            --bg: #f4f4f4; 
-            --border: 2px solid #000; 
-            --shadow: 4px 4px 0px #000; 
-            --radius: 16px; 
-            /* Variáveis para degradê customizado */
-            --grad-c1: #ff9a9e;
-            --grad-c2: #fecfef;
-        }
+    /* CONTROLES DO GERADOR */
+    .control-panel {
+      background: #fff;
+      border: var(--border);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      width: 100%;
+      max-width: 500px;
+      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    
+    .control-panel select {
+      width: 100%;
+      padding: 12px;
+      border: var(--border);
+      font-family: 'Roboto', sans-serif;
+      font-weight: 900;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 2px 2px 0 #000;
+    }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
-        
-        body { 
-            background-color: var(--bg); 
-            color: var(--black); 
-            font-family: 'Roboto', sans-serif; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            min-height: 100vh; 
-            padding: 20px; 
-        }
+    .btn-download {
+      background: #00FF00;
+      color: #000;
+      border: var(--border);
+      padding: 15px;
+      font-weight: 900;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: 0.1s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-download:active { transform: translate(3px, 3px); box-shadow: none; }
 
-        h1, h2, h3, .font-head { 
-            font-family: 'Montserrat', sans-serif; 
-            font-weight: 900; 
-            text-transform: uppercase; 
-            letter-spacing: -0.5px; 
-        }
+    /* =========================================
+       A ÁREA DO POST (O que será exportado)
+       ========================================= */
+    #export-wrapper {
+      width: 500px;
+      min-height: 500px; /* Mantém o formato quadrado como base */
+      height: auto; /* Permite crescer infinito para baixo */
+      background-color: var(--bg);
+      background-image: linear-gradient(var(--primary-light) 1px, transparent 1px), linear-gradient(90deg, var(--primary-light) 1px, transparent 1px);
+      background-size: 20px 20px;
+      position: relative;
+      overflow: hidden;
+      border: 4px solid #000;
+    }
 
-        .header-logo { 
-            font-size: 2rem; 
-            font-weight: 900; 
-            font-style: italic; 
-            margin-bottom: 20px; 
-            text-align: center; 
-            font-family: 'Montserrat', sans-serif;
-            text-transform: uppercase;
-        }
-        
-        .header-logo span { color: var(--primary); }
-        .header-subtitle { display: block; font-size: 1rem; color: #555; font-style: normal; margin-top: -5px;}
+    .post-header {
+      background: #000;
+      color: #fff;
+      padding: 15px;
+      text-align: center;
+      border-bottom: 4px solid var(--primary);
+    }
+    .post-logo {
+      font-family: 'Montserrat', sans-serif; 
+      font-weight: 900; 
+      font-size: 1.4rem; 
+      letter-spacing: -1px;
+    }
+    .post-logo span {
+      background: var(--primary);
+      color: #000;
+      padding: 2px 8px;
+      margin-left: 5px;
+      font-style: normal;
+      transform: rotate(-3deg);
+      display: inline-block;
+    }
 
-        .studio-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            justify-content: center;
-            max-width: 1000px;
-            width: 100%;
-        }
+    .post-content {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
 
-        /* Painel de Controles Estilo ZAP48 */
-        .controls {
-            background: #fff;
-            border: var(--border);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 25px 20px;
-            width: 100%;
-            max-width: 350px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
+    .post-idol-box {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+      z-index: 2;
+    }
 
-        .control-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
+    .post-avatar {
+      width: 160px;
+      height: 160px;
+      border: 4px solid var(--primary);
+      background: #000;
+      object-fit: cover;
+      box-shadow: 6px 6px 0 #000;
+    }
 
-        label { 
-            display: block; 
-            font-size: 0.75rem; 
-            font-weight: 900;
-            color: #555; 
-            margin-bottom: 2px; 
-            text-transform: uppercase;
-        }
+    .post-info {
+      flex: 1;
+    }
+    .post-name {
+      font-size: 2.2rem;
+      color: #000;
+      line-height: 1;
+      margin-bottom: 5px;
+    }
+    .post-tag {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 900;
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      display: inline-block;
+      border: 2px solid #000;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      box-shadow: 2px 2px 0 #000;
+    }
+    .post-bio {
+      font-size: 0.85rem;
+      font-weight: 700;
+      line-height: 1.4;
+      background: #fff;
+      border: var(--border-dashed);
+      padding: 10px;
+      color: #000;
+    }
 
-        input[type="text"], input[type="file"], select, input[type="range"] { 
-            width: 100%; 
-            padding: 10px; 
-            border: var(--border); 
-            border-radius: 8px; 
-            font-family: inherit; 
-            font-weight: 700; 
-            font-size: 0.9rem; 
-            background: #fafafa; 
-            transition: 0.2s; 
-            cursor: pointer;
-        }
+    .post-history {
+      background: #fff;
+      border: var(--border);
+      padding: 15px;
+      box-shadow: 4px 4px 0 #000;
+      flex: 1;
+      z-index: 2;
+    }
+    .post-history-title {
+      font-size: 1.1rem;
+      background: #000;
+      color: var(--primary);
+      display: inline-block;
+      padding: 4px 10px;
+      margin-bottom: 15px;
+    }
+    
+    .timeline-container {
+      /* Sistema de multi-colunas: se tiver muitos itens, ele divide em dois painéis */
+      column-width: 200px;
+      column-gap: 20px;
+    }
 
-        select optgroup { font-family: 'Roboto', sans-serif; font-weight: 900; background: #eee; }
-        select option { background: #fff; font-weight: normal; }
+    .t-item { 
+      position: relative; 
+      margin-bottom: 12px; 
+      font-size: 0.8rem; 
+      font-weight: 900; 
+      text-transform: uppercase;
+      border-left: 3px solid #000; 
+      padding-left: 15px; 
+      margin-left: 5px;
+      break-inside: avoid; /* Evita que um item separe na metade da coluna */
+    }
+    .t-item::before { content: ''; position: absolute; left: -9px; top: 0px; width: 12px; height: 12px; background: var(--primary); border: 3px solid #000;}
+    .t-date { font-size: 0.7rem; color: #fff; background: #000; padding: 2px 5px; display: inline-block; margin-bottom: 3px;}
 
-        input[type="text"]:focus, select:focus { background: #fff; border-color: var(--primary); }
+    /* Elementos decorativos no fundo da arte */
+    .decor-x { position: absolute; font-weight: 900; font-size: 8rem; color: rgba(0,0,0,0.05); top: 50%; right: -20px; z-index: 1; line-height: 0; pointer-events: none;}
+    .decor-skull { position: absolute; font-size: 4rem; color: var(--primary); opacity: 0.2; bottom: 20px; right: 20px; z-index: 1; pointer-events: none;}
 
-        input[type="color"] {
-            border: var(--border);
-            border-radius: 8px;
-            height: 40px;
-            padding: 2px;
-            cursor: pointer;
-            background: #fff;
-            width: 100%;
-        }
-
-        input[type="checkbox"] { width: auto; height: auto; cursor: pointer; accent-color: var(--primary); }
-
-        button { 
-            background: var(--primary); 
-            color: var(--black); 
-            border: var(--border); 
-            padding: 12px; 
-            border-radius: 8px; 
-            font-weight: 900; 
-            font-size: 1rem; 
-            width: 100%; 
-            cursor: pointer; 
-            box-shadow: 2px 2px 0 #000; 
-            text-transform: uppercase; 
-            transition: transform 0.1s; 
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        button:active { transform: scale(0.98); box-shadow: 0 0 0 #000; }
-
-        .btn-download { background: var(--black); color: var(--primary); margin-top: 10px; font-size: 1.1rem; padding: 15px; }
-
-        .stickers-row { display: flex; gap: 10px; justify-content: center; }
-
-        .sticker-btn { background: #fff; font-size: 20px; padding: 5px; border-radius: 8px; box-shadow: 2px 2px 0 #000; }
-
-        hr { border: 0; border-top: 2px dashed #ccc; margin: 5px 0; }
-
-        /* --- ÁREA DO PHOTOCARD (CORRIGIDA) --- */
-        .preview-area { display: flex; justify-content: center; align-items: center; }
-
-        /* Estilo base do card para formatos de tamanho fixo */
-        .photocard {
-            width: 320px;
-            height: 480px; /* Padrão fixo para kpop, dark, etc. */
-            position: relative;
-            overflow: hidden;
-            box-shadow: 8px 8px 0px rgba(0,0,0,0.1); 
-            transition: all 0.3s ease;
-            background-color: #ffffff;
-        }
-
-        /* Container da foto CORRIGIDO para garantir altura em formatos fixos */
-        .photo-container {
-            width: 100%;
-            height: 100%; /* Padrão para kpop, dark, etc. */
-            border-radius: inherit;
-            overflow: hidden;
-            position: relative;
-            background: #e0e0e0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #555;
-            font-weight: bold;
-        }
-
-        /* A foto em si CORRIGIDA */
-        .photo { width: 100%; height: 100%; position: absolute; top: 0; left: 0; background-size: cover; background-position: center; background-repeat: no-repeat; transform-origin: center; }
-
-        /* --- FORMATOS CUSTOMIZÁVEIS (POLAROIDS) --- */
-        /* Variáveis de borda só funcionam aqui */
-        .frame-polaroid-square { 
-            --border-size: 20px;
-            --border-bottom: 90px;
-            height: auto !important; /* Se adapta ao padding para ficar quadrado */
-            border-radius: 4px; 
-            padding: var(--border-size) var(--border-size) var(--border-bottom) var(--border-size); 
-            border: var(--border); 
-        }
-        .frame-polaroid-square .photo-container {
-            aspect-ratio: 1 / 1; /* Força área da foto quadrada */
-            height: auto !important; /* Sobrescreve o 100% padrão */
-            border-radius: 2px;
-            border: 1px solid rgba(0,0,0,0.1);
-        }
-
-        .frame-polaroid-portrait { 
-            --border-size: 20px;
-            --border-bottom: 90px;
-            /* Altura fixa de 480px funciona aqui, padding empurra conteúdo */
-            border-radius: 4px; 
-            padding: var(--border-size) var(--border-size) var(--border-bottom) var(--border-size); 
-            border: var(--border); 
-        }
-        .frame-polaroid-portrait .photo-container {
-            height: 100%; /* Ocupa altura restante dentro do padding */
-            border-radius: 2px;
-            border: 1px solid rgba(0,0,0,0.1);
-        }
-
-        /* --- FORMATOS PADRÃO (FIXOS - BUG CORRIGIDO) --- */
-        .frame-kpop { border-radius: var(--radius); border: 8px solid white; box-shadow: var(--shadow); }
-        .frame-dark { border-radius: var(--radius); border: 8px solid #222; background-color: #222 !important; }
-        .frame-pastel { border-radius: var(--radius); border: 8px solid #ffb7b2; background-color: #e2f0cb; }
-        
-        .frame-gradient { 
-            border-radius: var(--radius); 
-            padding: 8px; /* Funciona como borda transparente */
-            background: linear-gradient(45deg, var(--grad-c1) 0%, var(--grad-c2) 100%); 
-            box-shadow: var(--shadow); 
-        }
-        
-        .frame-holographic { 
-            border-radius: var(--radius); 
-            padding: 8px;
-            background: linear-gradient(124deg, #ff2400, #e81d1d, #e8b71d, #e3e81d, #1de840, #1ddde8, #2b1de8, #dd00f3, #dd00f3); 
-            background-size: 400% 400%; 
-            box-shadow: var(--shadow); 
-        }
-
-        /* Elementos genéricos */
-        .frame-overlay-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; background-repeat: no-repeat; pointer-events: none; z-index: 5; display: none; }
-
-        /* Elementos Arrastáveis */
-        .draggable { position: absolute; cursor: grab; user-select: none; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; }
-        .draggable:active { cursor: grabbing; }
-
-        .content-span, .content-img { display: inline-block; transition: transform 0.1s ease; }
-
-        .ui-controls {
-            position: absolute;
-            top: -35px;
-            right: -60px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            opacity: 0;
-            transition: 0.2s;
-            background: rgba(255,255,255,0.8);
-            padding: 5px;
-            border-radius: 8px;
-            border: 2px solid #000;
-        }
-
-        .draggable:hover .ui-controls { opacity: 1; }
-        .ui-row { display: flex; gap: 4px; justify-content: center; }
-
-        .btn-action {
-            background: #fff; color: #000; border: 2px solid #000; border-radius: 4px;
-            width: 24px; height: 24px; font-size: 14px; font-weight: 900;
-            display: flex; align-items: center; justify-content: center; cursor: pointer;
-            box-shadow: 2px 2px 0 rgba(0,0,0,1); font-family: 'Montserrat', sans-serif;
-        }
-
-        .btn-action:active { transform: scale(0.9); box-shadow: 0 0 0 rgba(0,0,0,1); }
-        .btn-action.delete { background: #ff4d4d; color: white;}
-        .hide-for-print .ui-controls { display: none !important; }
-
-    </style>
+    /* Responsive scale for desktop view */
+    @media (max-width: 550px) {
+      #export-wrapper { transform: scale(0.65); transform-origin: top center; margin-bottom: -150px;}
+    }
+  </style>
 </head>
 <body>
 
-    <div class="header-logo">
-        ZAP<span>48</span>
-        <span class="header-subtitle">Photocard Studio</span>
-    </div>
+  <div class="control-panel">
+    <h2 class="font-head" style="text-align: center;"><i class="fas fa-camera-retro"></i> Post Generator</h2>
+    
+    <label style="font-weight: 900; font-size: 0.8rem; text-transform: uppercase;">Selecione a Idol:</label>
+    <select id="member-select" onchange="renderPostCard()"></select>
 
-    <div class="studio-container">
+    <button class="btn-download" onclick="downloadPost()"><i class="fas fa-download"></i> Baixar Pôster (PNG)</button>
+  </div>
+
+  <div id="export-wrapper">
+    <div class="post-header">
+      <div class="post-logo">MELANCHOLY<span id="post-logo-span">LOVE <i class="fas fa-heart"></i></span></div>
+    </div>
+    
+    <div class="decor-x">X</div>
+    <div class="decor-skull"><i class="fas fa-skull"></i></div>
+
+    <div class="post-content">
+      
+      <div class="post-idol-box">
+        <img id="p-avatar" class="post-avatar" src="" crossorigin="anonymous">
+        <div class="post-info">
+          <h2 id="p-name" class="font-head post-name">Nome</h2>
+          <div id="p-unit" class="post-tag">Unit</div>
+          <div id="p-bio" class="post-bio">Bio aqui...</div>
+        </div>
+      </div>
+
+      <div class="post-history">
+        <h4 class="font-head post-history-title"><i class="fas fa-history"></i> Histórico</h4>
+        <div id="p-history" class="timeline-container">
+            </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // --- SUPABASE SETUP ---
+    var supaUrl = 'https://cotzdfxjazojpwpmkoss.supabase.co';
+    var supaKey = 'sb_publishable_vF3JVZw3vDrfLM5M6xtw_w_0VJh7uwm';
+    var db = window.supabase.createClient(supaUrl, supaKey);
+
+    var loadedMembers = [];
+
+    const pImg = (name, unit) => {
+        let hexCol = 'FF69B4'; 
+        if (unit === 'Melancholy') hexCol = '8A2BE2'; 
+        else if (unit === 'Love') hexCol = 'E60000'; 
+        let cleanName = name.replace(/<[^>]*>?/gm, '').trim().substring(0,3).toUpperCase();
+        return `https://ui-avatars.com/api/?name=${encodeURIComponent(cleanName)}&background=${hexCol}&color=111&size=200&font-size=0.33&bold=true`;
+    };
+
+    async function init() {
+        try {
+            const { data, error } = await db.from('members').select('*').order('created_at', { ascending: true });
+            if(data && data.length > 0) {
+                loadedMembers = data.map(m => ({ id: m.id, Nome: m.nome, Geracao: m.geracao, Foto: m.foto, SubUnit: m.subunit, Status: m.status, Perfil: m.perfil, Historico_Times: typeof m.historico_times === 'string' ? m.historico_times : JSON.stringify(m.historico_times || []) }));
+            }
+        } catch(e) { 
+            console.warn("DB error. Fallback to mock.", e); 
+            loadedMembers = [
+                { Nome: "Yua <i class='fas fa-skull'></i>", SubUnit: "Love", Foto: pImg("YUA", "Love"), Perfil: "A center misteriosa.", Historico_Times: '[{"data":"Nov 2023", "para":"Entrou para Unit: Love"}, {"data":"Dez 2023", "para":"Debut Oficial"}]' }
+            ];
+        } finally {
+            populateSelect();
+        }
+    }
+
+    function populateSelect() {
+        const select = document.getElementById("member-select");
+        select.innerHTML = '<option value="" disabled selected>-- Escolha --</option>';
         
-        <aside class="controls">
-            
-            <div class="control-group">
-                <label>📸 Foto Base</label>
-                <input type="file" id="upload" accept="image/*">
-                <input type="range" id="photoZoom" min="0.5" max="3" step="0.1" value="1" style="margin-top: 5px;">
-            </div>
+        loadedMembers.forEach((m, idx) => {
+            if(['graduada','demitida'].includes(m.Status?.toLowerCase())) return; 
+            let cleanName = m.Nome.replace(/<[^>]*>?/gm, '').trim();
+            select.innerHTML += `<option value="${idx}">${cleanName} (${m.SubUnit})</option>`;
+        });
+    }
 
-            <hr>
+    function renderPostCard() {
+        const idx = document.getElementById("member-select").value;
+        if(idx === "") return;
+        const m = loadedMembers[idx];
+        
+        const root = document.getElementById('export-wrapper');
+        const logoSpan = document.getElementById('post-logo-span');
+        let themeColor = '#FF69B4'; 
+        let themeLight = '#FFB6C1';
+        
+        if(m.SubUnit === 'Melancholy') {
+            themeColor = '#8A2BE2'; themeLight = '#D8BFD8';
+            logoSpan.innerHTML = 'MELANCHOLY <i class="fas fa-skull"></i>';
+        } else if (m.SubUnit === 'Love') {
+            themeColor = '#E60000'; themeLight = '#FFCCCC';
+            logoSpan.innerHTML = 'LOVE <i class="fas fa-heart"></i>';
+        } else {
+            logoSpan.innerHTML = 'LOVE <i class="fas fa-heart"></i>';
+        }
 
-            <div class="control-group">
-                <label>🖼️ Formato e Cor do Card</label>
-                <select id="frameSelect" style="margin-bottom: 5px;">
-                    <optgroup label="Originais Customizáveis">
-                        <option value="frame-polaroid-square">Polaroid Clássica (Quadrada)</option>
-                        <option value="frame-polaroid-portrait">Polaroid Retrato (Original)</option>
-                    </optgroup>
-                    <optgroup label="Padrão (Tamanho Fixo)">
-                        <option value="frame-kpop">K-Pop Album (Retrato Branco)</option>
-                        <option value="frame-dark">Dark Mode (Borda Preta)</option>
-                        <option value="frame-pastel">Kawaii Pastel (Rosa e Verde)</option>
-                        <option value="frame-gradient">Sunset Gradient (Degradê)</option>
-                        <option value="frame-holographic">Holográfica Especial</option>
-                    </optgroup>
-                </select>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <label style="margin:0; font-size: 0.7rem;">Cor Fundo/Borda:</label>
-                    <input type="color" id="cardBgColor" value="#ffffff" style="flex: 1; height: 35px;">
-                </div>
-            </div>
+        root.style.setProperty('--primary', themeColor);
+        root.style.setProperty('--primary-light', themeLight);
 
-            <div class="control-group" id="borderCustomizeGroup" style="display: none; background: #f9f9f9; padding: 10px; border-radius: 8px; border: 1px dashed #ccc;">
-                <label>📏 Ajuste de Bordas (Polaroid)</label>
-                <label style="font-size: 0.65rem; margin-top: 5px;">Espessura Geral:</label>
-                <input type="range" id="borderSize" min="0" max="40" value="20">
-                <label style="font-size: 0.65rem; margin-top: 5px;">Borda Inferior:</label>
-                <input type="range" id="bottomBorder" min="20" max="180" value="90">
-            </div>
+        document.getElementById("p-name").innerHTML = m.Nome;
+        document.getElementById("p-unit").innerHTML = `<i class="fas fa-star"></i> ${m.SubUnit} / ${m.Geracao}`;
+        
+        const imgEl = document.getElementById("p-avatar");
+        imgEl.setAttribute('crossorigin', 'anonymous');
+        imgEl.src = m.Foto || pImg(m.Nome, m.SubUnit);
 
-            <div class="control-group" id="gradientCustomizeGroup" style="display: none; background: #f9f9f9; padding: 10px; border-radius: 8px; border: 1px dashed #ccc;">
-                <label>🎨 Cores do Degradê</label>
-                <div style="display: flex; gap: 10px;">
-                    <input type="color" id="gradColor1" value="#ff9a9e">
-                    <input type="color" id="gradColor2" value="#fecfef">
-                </div>
-            </div>
+        document.getElementById("p-bio").innerHTML = m.Perfil ? m.Perfil.substring(0, 100) + (m.Perfil.length > 100 ? '...' : '') : "Sem bio.";
 
-            <div class="control-group">
-                <label>🎀 Moldura Transparente (PNG)</label>
-                <input type="file" id="uploadFrame" accept="image/png, image/webp, image/gif">
-            </div>
-
-            <hr>
-
-            <div class="control-group">
-                <label>✍️ Fonte, Texto e Borda</label>
-                <select id="fontSelect" style="margin-bottom: 5px; font-size: 1rem;">
-                    <optgroup label="✨ Assinatura de Idol (Elegantes)">
-                        <option value="'Pacifico'" style="font-family: 'Pacifico'">Pacifico (Casual/Amigável)</option>
-                        <option value="'Great Vibes'" style="font-family: 'Great Vibes'">Estilo Autography (Assinatura)</option>
-                        <option value="'Parisienne'" style="font-family: 'Parisienne'">Estilo Brittany (Celebridade)</option>
-                        <option value="'Sacramento'" style="font-family: 'Sacramento'">Estilo Amsterdam (Moderna)</option>
-                        <option value="'Dancing Script'" style="font-family: 'Dancing Script'">Estilo Hello Honey (Suave)</option>
-                        <option value="'Rouge Script'" style="font-family: 'Rouge Script'">Rouge Script (Clássica)</option>
-                    </optgroup>
-                    <optgroup label="🖌️ Estilo Pincel / Marker (K-Pop)">
-                        <option value="'Caveat Brush'" style="font-family: 'Caveat Brush'">Estilo Brusher (Pincel Forte)</option>
-                        <option value="'Permanent Marker'" style="font-family: 'Permanent Marker'">Estilo Playlist (Música/Pop)</option>
-                        <option value="'Kaushan Script'" style="font-family: 'Kaushan Script'">Estilo Selima (Artístico)</option>
-                        <option value="'Rock Salt'" style="font-family: 'Rock Salt'">Estilo Bromello (Brush Moderno)</option>
-                        <option value="'Gochi Hand'" style="font-family: 'Gochi Hand'">Estilo Wild Youth (Divertido)</option>
-                    </optgroup>
-                    <optgroup label="🧑‍🏫 Estilo Giz / Quadro">
-                        <option value="'Cabin Sketch'" style="font-family: 'Cabin Sketch'">Estilo Eraser (Lousa Clássica)</option>
-                        <option value="'Fredericka the Great'" style="font-family: 'Fredericka the Great'">Estilo Chalktastic (Escolar)</option>
-                        <option value="'Love Ya Like A Sister'" style="font-family: 'Love Ya Like A Sister'">Estilo KG Second (Desenhada)</option>
-                        <option value="'Delicious Handrawn'" style="font-family: 'Delicious Handrawn'">Estilo Chalkboard (Crayon)</option>
-                    </optgroup>
-                    <optgroup label="✍️ Clássicas e Manuscritas">
-                        <option value="'Kalam'" style="font-family: 'Kalam'">Kalam (Realista)</option>
-                        <option value="'Delius'" style="font-family: 'Delius'">Delius (Quadrinhos)</option>
-                        <option value="'Homemade Apple'" style="font-family: 'Homemade Apple'">Homemade Apple</option>
-                        <option value="'Tangerine'" style="font-family: 'Tangerine'">Tangerine</option>
-                        <option value="'Amatic SC'" style="font-family: 'Amatic SC'">Amatic SC</option>
-                        <option value="'Patrick Hand'" style="font-family: 'Patrick Hand'">Patrick Hand</option>
-                        <option value="'Just Another Hand'" style="font-family: 'Just Another Hand'">Just Another Hand</option>
-                        <option value="'Montserrat'" style="font-family: 'Montserrat'">Montserrat (Oficial ZAP48)</option>
-                    </optgroup>
-                </select>
-                
-                <input type="text" id="inputText" placeholder="Escreva algo...">
-                
-                <div style="display: flex; gap: 10px; margin-top: 5px;">
-                    <div style="flex:1;">
-                        <label style="font-size: 0.65rem;">Cor Letra:</label>
-                        <input type="color" id="textColor" value="#8ACE00">
-                    </div>
-                    <div style="flex:1;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
-                            <label style="font-size: 0.65rem; margin:0;">Cor Borda:</label>
-                            <label style="font-size: 0.6rem; margin:0; text-transform: none; display: flex; align-items: center; gap: 4px; cursor: pointer;">
-                                <input type="checkbox" id="noOutline"> Sem borda
-                            </label>
-                        </div>
-                        <input type="color" id="textOutlineColor" value="#000000">
-                    </div>
-                </div>
-            </div>
-            <button onclick="addText()">+ Inserir Texto</button>
-
-            <hr>
-
-            <div class="control-group">
-                <label>⭐ Imagem como Sticker</label>
-                <input type="file" id="uploadSticker" accept="image/*">
-            </div>
-
-            <div class="control-group">
-                <label>🤩 Emojis Customizados</label>
-                <div style="display: flex; gap: 5px;">
-                    <input type="text" id="customEmojiInput" placeholder="Cole emoji aqui" style="flex: 1; text-align: center; font-size: 1.2rem;">
-                    <button onclick="addCustomEmoji()" style="width: auto; padding: 10px;">ADD</button>
-                </div>
-            </div>
-
-            <div class="control-group">
-                <label>💖 Stickers Rápidos</label>
-                <div class="stickers-row">
-                    <button class="sticker-btn" onclick="addStickerText('💖')">💖</button>
-                    <button class="sticker-btn" onclick="addStickerText('✨')">✨</button>
-                    <button class="sticker-btn" onclick="addStickerText('🌸')">🌸</button>
-                    <button class="sticker-btn" onclick="addStickerText('🎀')">🎀</button>
-                </div>
-            </div>
-
-            <button class="btn-download" onclick="downloadCard()">💾 Baixar Photocard</button>
-
-        </aside>
-
-        <section class="preview-area">
-            <div id="photocard" class="photocard frame-polaroid-square">
-                <div class="photo-container">
-                    <span id="placeholder-text">Sua foto aqui</span>
-                    <div id="photo" class="photo" style="display: none;"></div>
-                </div>
-                
-                <div id="frameOverlay" class="frame-overlay-img"></div>
-                <div id="elements-container"></div>
-            </div>
-        </section>
-
-    </div>
-
-    <script>
-        const photocard = document.getElementById('photocard');
-        const elementsContainer = document.getElementById('elements-container');
-        const photoDiv = document.getElementById('photo');
-
-        // Configuração inicial ao carregar (mostra os controles da polaroid quadrada)
-        window.onload = function() {
-            document.getElementById('borderCustomizeGroup').style.display = 'flex';
-        };
-
-        // FOTO E ZOOM
-        document.getElementById('upload').addEventListener('change', function(e) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                photoDiv.style.backgroundImage = `url(${reader.result})`;
-                photoDiv.style.display = 'block';
-                document.getElementById('placeholder-text').style.display = 'none';
-                document.getElementById('photoZoom').value = 1; 
-                photoDiv.style.transform = 'scale(1)';
-            }
-            if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+        let th = []; try { th = JSON.parse(m.Historico_Times || "[]"); } catch(e){}
+        
+        const mm = { 'Jan':1, 'Fev':2, 'Mar':3, 'Abr':4, 'Mai':5, 'Jun':6, 'Jul':7, 'Ago':8, 'Set':9, 'Out':10, 'Nov':11, 'Dez':12 };
+        th.sort((a,b) => {
+            let aP=(a.data||'').split(' '), bP=(b.data||'').split(' ');
+            let yA=parseInt(aP[1])||0, yB=parseInt(bP[1])||0;
+            return yA!==yB ? yB-yA : (mm[bP[0]]||0) - (mm[aP[0]]||0);
         });
 
-        document.getElementById('photoZoom').addEventListener('input', function(e) {
-            photoDiv.style.transform = `scale(${e.target.value})`;
+        // Alterado para mostrar a timeline inteira (removido o slice)
+        let displayHist = th;
+        const histEl = document.getElementById("p-history");
+        
+        if(displayHist.length === 0) {
+            histEl.innerHTML = `<div style="color:#000; font-weight:bold;">Ainda construindo sua história.</div>`;
+        } else {
+            histEl.innerHTML = displayHist.map(h => `<div class="t-item"><span class="t-date">${h.data}</span><br>${h.para}</div>`).join('');
+        }
+    }
+
+    function downloadPost() {
+        if(document.getElementById("member-select").value === "") {
+            alert("Selecione uma Idol primeiro!");
+            return;
+        }
+
+        const wrapper = document.getElementById("export-wrapper");
+        const btn = document.querySelector(".btn-download");
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
+
+        html2canvas(wrapper, {
+            scale: 2, 
+            useCORS: true, 
+            backgroundColor: null
+        }).then(canvas => {
+            let link = document.createElement('a');
+            link.download = `Post_${document.getElementById('p-name').innerText.replace(/<[^>]*>?/gm, '').trim()}.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+            btn.innerHTML = '<i class="fas fa-download"></i> Baixar Pôster (PNG)';
+        }).catch(err => {
+            console.error(err);
+            alert("Erro ao gerar a imagem. Verifique o console.");
+            btn.innerHTML = '<i class="fas fa-download"></i> Baixar Pôster (PNG)';
         });
+    }
 
-        // --- LÓGICA DE TROCA DE MOLDURAS (CORRIGIDA) ---
-        document.getElementById('frameSelect').addEventListener('change', function() {
-            // Aplica a classe da moldura
-            photocard.className = 'photocard ' + this.value;
-            
-            // Gerencia qual painel de customização aparece
-            const borderControls = document.getElementById('borderCustomizeGroup');
-            const gradientControls = document.getElementById('gradientCustomizeGroup');
-
-            if (this.value.includes('polaroid')) {
-                // É polaroid: mostra controle de bordas, esconde degradê
-                borderControls.style.display = 'flex';
-                gradientControls.style.display = 'none';
-            } else if (this.value === 'frame-gradient') {
-                // É degradê: esconde bordas, mostra controle de degradê
-                borderControls.style.display = 'none';
-                gradientControls.style.display = 'flex';
-            } else {
-                // Outro formato: esconde tudo
-                borderControls.style.display = 'none';
-                gradientControls.style.display = 'none';
-            }
-        });
-
-        // Cor de fundo geral
-        document.getElementById('cardBgColor').addEventListener('input', function(e) {
-            photocard.style.backgroundColor = e.target.value;
-            // Para molduras de tamanho fixo com borda CSS pura, muda a cor da borda também
-            if(this.value === 'frame-kpop' || this.value === 'frame-pastel') {
-                photocard.style.borderColor = e.target.value;
-            }
-        });
-
-        // SLIDERS DE BORDAS CUSTOMIZÁVEIS (Só funcionam nas Polaroids via CSS var)
-        document.getElementById('borderSize').addEventListener('input', function(e) {
-            photocard.style.setProperty('--border-size', e.target.value + 'px');
-        });
-
-        document.getElementById('bottomBorder').addEventListener('input', function(e) {
-            photocard.style.setProperty('--border-bottom', e.target.value + 'px');
-        });
-
-        // --- NOVO: LÓGICA DE CUSTOMIZAÇÃO DO DEGRADÊ ---
-        function updateGradient() {
-            const c1 = document.getElementById('gradColor1').value;
-            const c2 = document.getElementById('gradColor2').value;
-            // Atualiza as variáveis CSS para o degradê aparecer no background da moldura
-            photocard.style.setProperty('--grad-c1', c1);
-            photocard.style.setProperty('--grad-c2', c2);
-        }
-
-        document.getElementById('gradColor1').addEventListener('input', updateGradient);
-        document.getElementById('gradColor2').addEventListener('input', updateGradient);
-
-
-        // MOLDURA PINTEREST (PNG Transparente)
-        document.getElementById('uploadFrame').addEventListener('change', function(e) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                const frameOverlay = document.getElementById('frameOverlay');
-                frameOverlay.style.backgroundImage = `url(${reader.result})`;
-                frameOverlay.style.display = 'block';
-            }
-            if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
-        });
-
-        // IMAGEM STICKER
-        document.getElementById('uploadSticker').addEventListener('change', function(e) {
-            const reader = new FileReader();
-            reader.onload = function() { addStickerImage(reader.result); }
-            if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
-            this.value = ''; 
-        });
-
-        // TEXTOS COM E SEM BORDA
-        function addText() {
-            const textValue = document.getElementById('inputText').value;
-            if (!textValue) return;
-
-            const color = document.getElementById('textColor').value;
-            const outlineColor = document.getElementById('textOutlineColor').value;
-            const font = document.getElementById('fontSelect').value;
-            const noOutline = document.getElementById('noOutline').checked;
-
-            const el = createDraggableElement(textValue, false);
-            const contentSpan = el.querySelector('.content-span');
-            contentSpan.style.color = color;
-            contentSpan.style.fontFamily = font;
-            
-            // Aplica ou remove a borda sólida usando text-shadow múltiplo
-            if(!noOutline) {
-                contentSpan.style.textShadow = `
-                    -2px -2px 0 ${outlineColor}, 2px -2px 0 ${outlineColor}, 
-                    -2px 2px 0 ${outlineColor}, 2px 2px 0 ${outlineColor},
-                    0px 2px 0 ${outlineColor}, 2px 0px 0 ${outlineColor}, 
-                    0px -2px 0 ${outlineColor}, -2px 0px 0 ${outlineColor}
-                `;
-            } else {
-                contentSpan.style.textShadow = "none";
-            }
-            
-            elementsContainer.appendChild(el);
-            document.getElementById('inputText').value = '';
-        }
-
-        function addStickerText(emoji) {
-            const el = createDraggableElement(emoji, false, true);
-            elementsContainer.appendChild(el);
-        }
-
-        // Adicionar Emoji Customizado
-        function addCustomEmoji() {
-            const emojiVal = document.getElementById('customEmojiInput').value;
-            if(emojiVal) {
-                addStickerText(emojiVal);
-                document.getElementById('customEmojiInput').value = '';
-            }
-        }
-
-        function addStickerImage(src) {
-            const el = createDraggableElement(src, true);
-            elementsContainer.appendChild(el);
-        }
-
-        // --- SISTEMA DE DRAG, RESIZE E ROTATE (Mantido) ---
-        function createDraggableElement(content, isImage = false, isEmoji = false) {
-            const div = document.createElement('div');
-            div.className = 'draggable';
-            div.dataset.isImage = isImage;
-            
-            let contentHtml = '';
-            if(isImage) {
-                contentHtml = `<img src="${content}" class="content-img" data-rotation="0" style="width: 100px; pointer-events: none;">`;
-            } else {
-                let defaultSize = isEmoji ? '45px' : '40px'; 
-                contentHtml = `<span class="content-span" data-rotation="0" style="font-size: ${defaultSize}; white-space: nowrap;">${content}</span>`;
-            }
-
-            div.innerHTML = `
-                ${contentHtml}
-                <div class="ui-controls">
-                    <div class="ui-row"><div class="btn-action delete" onclick="this.closest('.draggable').remove()">X</div></div>
-                    <div class="ui-row">
-                        <div class="btn-action" onclick="resizeEl(this, 1)">+</div>
-                        <div class="btn-action" onclick="resizeEl(this, -1)">-</div>
-                    </div>
-                    <div class="ui-row">
-                        <div class="btn-action" onclick="rotateEl(this, -1)">↺</div>
-                        <div class="btn-action" onclick="rotateEl(this, 1)">↻</div>
-                    </div>
-                </div>
-            `;
-            
-            makeDraggable(div);
-            return div;
-        }
-
-        function resizeEl(btn, direction) {
-            const draggable = btn.closest('.draggable');
-            const isImage = draggable.dataset.isImage === 'true';
-            
-            if(isImage) {
-                const img = draggable.querySelector('.content-img');
-                let currentWidth = parseInt(img.style.width);
-                let newWidth = currentWidth + (direction * 15);
-                if (newWidth > 20) img.style.width = newWidth + 'px';
-            } else {
-                const span = draggable.querySelector('.content-span');
-                let currentSize = parseInt(span.style.fontSize);
-                let newSize = currentSize + (direction * 5);
-                if (newSize > 10) span.style.fontSize = newSize + 'px';
-            }
-        }
-
-        function rotateEl(btn, direction) {
-            const draggable = btn.closest('.draggable');
-            const isImage = draggable.dataset.isImage === 'true';
-            const target = isImage ? draggable.querySelector('.content-img') : draggable.querySelector('.content-span');
-            
-            let currentRot = parseInt(target.dataset.rotation || 0);
-            currentRot += direction * 15; 
-            target.dataset.rotation = currentRot;
-            target.style.transform = `rotate(${currentRot}deg)`;
-        }
-
-        function makeDraggable(element) {
-            let isDragging = false;
-            let startX, startY, initialLeft, initialTop;
-
-            const startDrag = (e) => {
-                if(e.target.classList.contains('btn-action')) return; 
-                
-                isDragging = true;
-                const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-                const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-
-                const rect = element.getBoundingClientRect();
-                const parentRect = photocard.getBoundingClientRect();
-                
-                element.style.transform = 'none';
-                element.style.left = (rect.left - parentRect.left) + 'px';
-                element.style.top = (rect.top - parentRect.top) + 'px';
-
-                startX = clientX;
-                startY = clientY;
-                initialLeft = parseFloat(element.style.left) || 0;
-                initialTop = parseFloat(element.style.top) || 0;
-            };
-
-            const drag = (e) => {
-                if (!isDragging) return;
-                e.preventDefault(); 
-                
-                const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-                const clientY = e.type.includes('mouse') ? e.clientY : e.touches[0].clientY;
-
-                const dx = clientX - startX;
-                const dy = clientY - startY;
-
-                element.style.left = `${initialLeft + dx}px`;
-                element.style.top = `${initialTop + dy}px`;
-            };
-
-            const stopDrag = () => { isDragging = false; };
-
-            element.addEventListener('mousedown', startDrag);
-            document.addEventListener('mousemove', drag);
-            document.addEventListener('mouseup', stopDrag);
-            element.addEventListener('touchstart', startDrag, {passive: false});
-            document.addEventListener('touchmove', drag, {passive: false});
-            document.addEventListener('touchend', stopDrag);
-        }
-
-        function downloadCard() {
-            photocard.classList.add('hide-for-print');
-
-            html2canvas(photocard, {
-                scale: 3, 
-                backgroundColor: null,
-                useCORS: true 
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = 'zap48-photocard.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-                
-                photocard.classList.remove('hide-for-print');
-            });
-        }
-    </script>
+    init();
+  </script>
 </body>
 </html>
