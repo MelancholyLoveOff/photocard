@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Melancholy Love - Mega Post Generator v2.1</title>
+  <title>Melancholy Love - Mega Post Generator v3.1</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,900;1,900&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -93,7 +93,7 @@
     /* =========================================
        A ÁREA DO POST (O que será exportado)
        ========================================= */
-    #export-wrapper, #export-formation-wrapper {
+    #export-wrapper, #export-formation-wrapper, #export-group-wrapper {
       width: 500px;
       min-height: 500px;
       height: auto;
@@ -107,7 +107,7 @@
     }
 
     /* Mostra o wrapper ativo */
-    #export-wrapper.active-wrapper, #export-formation-wrapper.active-wrapper {
+    #export-wrapper.active-wrapper, #export-formation-wrapper.active-wrapper, #export-group-wrapper.active-wrapper {
       display: block;
     }
 
@@ -152,7 +152,7 @@
     .track-row { padding: 5px 0; border-bottom: 2px dashed #ccc; font-size: 0.85rem; font-weight: 900; text-transform: uppercase; display: flex; justify-content: space-between;}
     .track-row:last-child { border-bottom: none; }
 
-    /* LAYOUT: DISCOGRAFIA (FORMAÇÃO SEGUNDA IMAGEM) */
+    /* LAYOUT: GRADES DE MEMBROS (FORMAÇÃO E GRUPO GERAL) */
     .formation-member-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -216,25 +216,35 @@
     .news-meta { margin-top: 15px; font-size: 0.8rem; font-weight: 900; color: #666; text-align: right; }
 
     @media (max-width: 550px) {
-      #export-wrapper, #export-formation-wrapper { transform: scale(0.65); transform-origin: top center; margin-bottom: -150px;}
+      #export-wrapper, #export-formation-wrapper, #export-group-wrapper { transform: scale(0.65); transform-origin: top center; margin-bottom: -150px;}
     }
   </style>
 </head>
 <body>
 
   <div class="control-panel">
-    <h2 class="font-head" style="text-align: center;"><i class="fas fa-camera-retro"></i> Post Generator v2</h2>
+    <h2 class="font-head" style="text-align: center;"><i class="fas fa-camera-retro"></i> Post Generator v3</h2>
     
     <label style="font-weight: 900; font-size: 0.8rem;">TIPO DE POST:</label>
     <select id="post-type" onchange="switchMode()">
-      <option value="member">Membro (Perfil + Músicas)</option>
-      <option value="disco" selected>Discografia (Capa/Tracklist)</option>
+      <option value="member">Membro Específico (Perfil + Músicas)</option>
+      <option value="group">Elenco / Visão Geral (Todas as Membros)</option>
+      <option value="disco" selected>Discografia (Capa / Formação)</option>
       <option value="news">Notícia (Comunicado)</option>
     </select>
 
     <div id="ctrl-member" class="ctrl-group">
       <label style="font-weight: 900; font-size: 0.7rem;">SELECIONE A IDOL:</label>
       <select id="member-select" onchange="renderMemberPost()"></select>
+    </div>
+
+    <div id="ctrl-group" class="ctrl-group">
+      <label style="font-weight: 900; font-size: 0.7rem;">FILTRAR POR UNIT:</label>
+      <select id="group-filter-select" onchange="renderGroupPost()">
+        <option value="All" selected>Todas as Membros Ativas</option>
+        <option value="Melancholy">Apenas Unit: Melancholy</option>
+        <option value="Love">Apenas Unit: Love</option>
+      </select>
     </div>
 
     <div id="ctrl-disco" class="ctrl-group active">
@@ -265,7 +275,7 @@
 
   <div id="export-wrapper" class="active-wrapper">
     <div class="post-header">
-      <div class="post-logo">MELANCHOLY<span id="post-logo-span">LOVE <i class="fas fa-heart"></i></span></div>
+      <div class="post-logo">MELANCHOLY<span>LOVE <i class="fas fa-heart"></i></span></div>
     </div>
     
     <div class="decor-x">X</div>
@@ -321,22 +331,34 @@
 
   <div id="export-formation-wrapper">
     <div class="post-header">
-      <div class="post-logo">MELANCHOLY<span id="post-logo-span-f">LOVE <i class="fas fa-heart"></i></span></div>
+      <div class="post-logo">MELANCHOLY<span>LOVE <i class="fas fa-heart"></i></span></div>
     </div>
-    
     <div class="decor-x">X</div>
-    
     <div class="post-content">
         <div style="text-align:center; margin-bottom: 20px;">
             <span id="df-album-tag" class="tag" style="background:var(--primary); color:#fff; font-weight:900; font-size:0.7rem; padding:2px 8px; border:2px solid #000;">ALBUM</span>
             <h2 id="df-track-title" class="font-head" style="font-size:2.2rem; line-height:1; color:#000; margin-top:5px;">Nome da Música</h2>
             <p id="df-kind" style="font-weight:900; text-transform:uppercase; font-size:0.8rem; color:#666;"></p>
         </div>
-
         <div class="box-panel">
             <h4 class="font-head box-title"><i class="fas fa-users"></i> Formação de Membros</h4>
-            <div id="df-member-grid" class="formation-member-grid">
-                </div>
+            <div id="df-member-grid" class="formation-member-grid"></div>
+        </div>
+    </div>
+  </div>
+
+  <div id="export-group-wrapper">
+    <div class="post-header">
+      <div class="post-logo">MELANCHOLY<span>LOVE <i class="fas fa-heart"></i></span></div>
+    </div>
+    <div class="decor-x">X</div>
+    <div class="post-content">
+        <div style="text-align:center; margin-bottom: 20px;">
+            <h2 id="dg-title" class="font-head" style="font-size:2.4rem; line-height:1; color:#000; margin-top:5px;">Melancholy Love</h2>
+            <p id="dg-sub" class="post-tag" style="margin-top: 10px;">Todas as Membros</p>
+        </div>
+        <div class="box-panel">
+            <div id="dg-member-grid" class="formation-member-grid"></div>
         </div>
     </div>
   </div>
@@ -348,7 +370,7 @@
     var db = window.supabase.createClient(supaUrl, supaKey);
 
     var loadedMembers = [], loadedDiscos = [], loadedNews = [];
-    var currentTracklistData = null; // Armazena a tracklist do álbum selecionado
+    var currentTracklistData = null; 
 
     const pImg = (name, unit) => {
         let hexCol = 'FF69B4'; 
@@ -418,59 +440,73 @@
         });
     }
 
-    // Gerencia a troca de tipo principal de post (Membro/Disco/News)
+    // Gerencia a troca de tipo principal de post
     function switchMode() {
         const mode = document.getElementById("post-type").value;
         
-        // Toggle Controls
+        // Esconde todos os controles e mostra o selecionado
         document.querySelectorAll('.ctrl-group').forEach(el => el.classList.remove('active'));
         document.getElementById(`ctrl-${mode}`).classList.add('active');
 
-        // Toggle Views dentro do Wrapper 1 (padrão)
-        document.querySelectorAll('#export-wrapper .export-view').forEach(el => el.classList.remove('active'));
-        
-        // Padrão: Ativa o Wrapper 1
-        document.getElementById('export-wrapper').classList.add('active-wrapper');
+        // Esconde todos os wrappers
+        document.getElementById('export-wrapper').classList.remove('active-wrapper');
         document.getElementById('export-formation-wrapper').classList.remove('active-wrapper');
+        document.getElementById('export-group-wrapper').classList.remove('active-wrapper');
 
-        // Render current
-        if(mode === 'member') {
-            document.getElementById('view-member').classList.add('active');
-            renderMemberPost();
-        }
-        if(mode === 'disco') {
-            document.getElementById('view-disco-standard').classList.add('active');
-            handleDiscoSelectionChange(); // Força reset para view padrão
-        }
-        if(mode === 'news') {
-            document.getElementById('view-news').classList.add('active');
-            renderNewsPost();
+        // Lógica de ativação dos wrappers
+        if(mode === 'group') {
+            document.getElementById('export-group-wrapper').classList.add('active-wrapper');
+            renderGroupPost();
+        } else if (mode === 'disco' && document.getElementById("disco-view-type").value === 'formation') {
+            document.getElementById('export-formation-wrapper').classList.add('active-wrapper');
+            renderDiscoFormationPost();
+        } else {
+            // Membros individuais, Disco Padrão e News caem no wrapper 1
+            document.getElementById('export-wrapper').classList.add('active-wrapper');
+            document.querySelectorAll('#export-wrapper .export-view').forEach(el => el.classList.remove('active'));
+            
+            if(mode === 'member') {
+                document.getElementById('view-member').classList.add('active');
+                renderMemberPost();
+            }
+            if(mode === 'disco') {
+                document.getElementById('view-disco-standard').classList.add('active');
+                handleDiscoSelectionChange(); 
+            }
+            if(mode === 'news') {
+                document.getElementById('view-news').classList.add('active');
+                renderNewsPost();
+            }
         }
     }
 
+    // --- NOVA LÓGICA DE THEME E LOGO ---
     function applyTheme(unitStr, wrapperId = 'export-wrapper') {
         const root = document.getElementById(wrapperId);
-        // Pega o span do logo correto baseado no wrapper
-        const logoSpanId = wrapperId === 'export-formation-wrapper' ? 'post-logo-span-f' : 'post-logo-span';
-        const logoSpan = document.getElementById(logoSpanId);
+        
+        // Pega a div inteira do logo dentro do wrapper ativo
+        const logoDiv = root.querySelector('.post-logo');
         
         let themeColor = '#FF69B4', themeLight = '#FFB6C1'; 
         
+        // Reescreve o logo para remover o texto duplicado
         if(unitStr === 'Melancholy') {
             themeColor = '#8A2BE2'; themeLight = '#D8BFD8';
-            logoSpan.innerHTML = 'MELANCHOLY <i class="fas fa-skull"></i>';
+            logoDiv.innerHTML = '<span>MELANCHOLY <i class="fas fa-skull"></i></span>';
         } else if (unitStr === 'Love') {
             themeColor = '#E60000'; themeLight = '#FFCCCC';
-            logoSpan.innerHTML = 'LOVE <i class="fas fa-heart"></i>';
+            logoDiv.innerHTML = '<span>LOVE <i class="fas fa-heart"></i></span>';
         } else {
-            logoSpan.innerHTML = 'LOVE <i class="fas fa-heart"></i>';
+            themeColor = '#FF69B4'; themeLight = '#FFB6C1';
+            logoDiv.innerHTML = 'MELANCHOLY<span>LOVE <i class="fas fa-heart"></i></span>';
         }
+        
         root.style.setProperty('--primary', themeColor);
         root.style.setProperty('--primary-light', themeLight);
         return themeColor;
     }
 
-    // --- RENDER MEMBER ---
+    // --- RENDER MEMBER INDIVIDUAL ---
     function renderMemberPost() {
         const idx = document.getElementById("member-select").value;
         if(idx === "") return;
@@ -481,20 +517,15 @@
 
         document.getElementById("p-name").innerHTML = m.nome;
         document.getElementById("p-unit").innerHTML = `<i class="fas fa-star"></i> ${sub} / ${m.geracao}`;
-        
-        const imgEl = document.getElementById("p-avatar");
-        imgEl.src = resolveImage(m.foto);
+        document.getElementById("p-avatar").src = resolveImage(m.foto);
 
-        // History
         let th = []; try { th = JSON.parse(m.historico_times || "[]"); } catch(e){}
         const histEl = document.getElementById("p-history");
         if(th.length === 0) histEl.innerHTML = `<div style="font-weight:bold;">Ainda construindo sua história.</div>`;
         else histEl.innerHTML = th.map(h => `<div class="t-item"><span class="t-date">${h.data}</span><br>${h.para}</div>`).join('');
 
-        // Participations (Músicas)
         let partsHTML = "";
         const cleanMName = (m.nome||'').replace(/<[^>]*>?/gm, '').trim();
-        
         loadedDiscos.forEach(d => {
             let fJSON = getTracklistJSON(d);
             if (Array.isArray(fJSON)) {
@@ -510,9 +541,56 @@
         document.getElementById("p-songs").innerHTML = partsHTML || "Nenhuma registrada.";
     }
 
-    // --- DISCO LOGIC ---
+    // --- RENDER GROUP / UNIT GERAL ---
+    function renderGroupPost() {
+        const filter = document.getElementById("group-filter-select").value;
+        const themeColor = applyTheme(filter, 'export-group-wrapper');
 
-    // Chamado quando muda o Álbum selecionado
+        let title = "Melancholy Love";
+        let sub = "Todas as Membros Ativas";
+        
+        if(filter === 'Love') { title = "Sub-Unit: Love"; sub = "Elenco Atual"; }
+        if(filter === 'Melancholy') { title = "Sub-Unit: Melancholy"; sub = "Elenco Atual"; }
+
+        document.getElementById("dg-title").innerHTML = title;
+        const subTag = document.getElementById("dg-sub");
+        subTag.innerHTML = sub;
+        
+        if(filter === 'All') {
+            subTag.style.background = '#000';
+            subTag.style.color = '#fff';
+            subTag.style.borderColor = '#000';
+        } else {
+            subTag.style.background = themeColor;
+            subTag.style.color = '#fff';
+            subTag.style.borderColor = '#000';
+        }
+
+        const grid = document.getElementById("dg-member-grid");
+        grid.innerHTML = "";
+
+        const filteredMembers = loadedMembers.filter(m => {
+            if(['graduada','demitida'].includes((m.status||'').toLowerCase())) return false;
+            if(filter !== 'All' && (m.subunit || 'All') !== filter) return false;
+            return true;
+        });
+
+        if(filteredMembers.length > 0) {
+            grid.innerHTML = filteredMembers.map(m => {
+                const photoUrl = resolveImage(m.foto);
+                return `
+                    <div class="fm-card">
+                        <img src="${photoUrl}" crossorigin="anonymous">
+                        <div class="fm-name">${m.nome}</div>
+                    </div>
+                `;
+            }).join('');
+        } else {
+            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; font-weight:bold;">Nenhum membro encontrado.</p>';
+        }
+    }
+
+    // --- DISCO LOGIC ---
     function handleDiscoSelectionChange() {
         const idx = document.getElementById("disco-select").value;
         const trackSelect = document.getElementById("disco-track-select");
@@ -521,15 +599,11 @@
         trackSelect.innerHTML = '<option value="" disabled selected>-- Escolha a Música --</option>';
         currentTracklistData = null;
 
-        if(idx === "") {
-            trackCtrl.style.display = 'none';
-            return;
-        }
+        if(idx === "") { trackCtrl.style.display = 'none'; return; }
 
         const d = loadedDiscos[idx];
         currentTracklistData = getTracklistJSON(d);
 
-        // Popula o seletor de músicas se houver dados
         if(Array.isArray(currentTracklistData)) {
             trackCtrl.style.display = 'block';
             currentTracklistData.forEach((track, tIdx) => {
@@ -539,32 +613,12 @@
             trackCtrl.style.display = 'none';
         }
 
-        // Reseta para view padrão e renderiza
         document.getElementById("disco-view-type").value = "standard";
         switchDiscoView();
     }
 
-    // Troca entre View Padrão (Capa) e View Formação (Membros)
-    function switchDiscoView() {
-        const viewType = document.getElementById("disco-view-type").value;
-        
-        if(viewType === 'formation') {
-            // Ativa Wrapper de Formação (Segunda Imagem)
-            document.getElementById('export-wrapper').classList.remove('active-wrapper');
-            document.getElementById('export-formation-wrapper').classList.add('active-wrapper');
-            renderDiscoFormationPost(); // Tenta renderizar
-        } else {
-            // Ativa Wrapper Padrão (Capa)
-            document.getElementById('export-formation-wrapper').classList.remove('active-wrapper');
-            document.getElementById('export-wrapper').classList.add('active-wrapper');
-            // Garante que a view correta dentro do wrapper esteja ativa
-            document.querySelectorAll('#export-wrapper .export-view').forEach(el => el.classList.remove('active'));
-            document.getElementById('view-disco-standard').classList.add('active');
-            renderDiscoStandardPost();
-        }
-    }
+    function switchDiscoView() { switchMode(); }
 
-    // --- RENDER DISCO (PADRÃO - CAPA + TRACKLIST) ---
     function renderDiscoStandardPost() {
         const idx = document.getElementById("disco-select").value;
         if(idx === "") return;
@@ -578,11 +632,9 @@
         document.getElementById("d-tags").innerHTML = `<span class="post-tag" style="background:#000; color:${themeCol}; border-color:${themeCol}">${d.tipo}</span>`;
 
         let trackHTML = "Sem dados de tracklist (ctl48 JSON faltando).";
-        
         if (Array.isArray(currentTracklistData)) {
             trackHTML = currentTracklistData.map(t => {
                 let centerStr = "";
-                // Acha a center na estrutura JSON
                 const center = (t.members || []).find(m => m.isCenter);
                 if(center) centerStr = `<span style="font-size:0.7rem; color:#666;">(C: ${center.name})</span>`;
                 return `<div class="track-row"><span>${t.name} ${centerStr}</span> <span class="song-tag">${t.kind}</span></div>`;
@@ -591,13 +643,12 @@
         document.getElementById("d-tracklist").innerHTML = trackHTML;
     }
 
-    // --- RENDER DISCO (FORMAÇÃO SEGUNDA IMAGEM) ---
     function renderDiscoFormationPost() {
         const dIdx = document.getElementById("disco-select").value;
         const tIdx = document.getElementById("disco-track-select").value;
         
         if(dIdx === "" || tIdx === "") {
-            document.getElementById("df-member-grid").innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:20px; font-weight:bold;">Selecione o álbum e a música nos controles acima.</p>';
+            document.getElementById("df-member-grid").innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:20px; font-weight:bold;">Selecione o álbum e a música.</p>';
             return;
         }
 
@@ -616,10 +667,8 @@
 
         if(Array.isArray(track.members)) {
             track.members.forEach(mInTrack => {
-                // Acha os dados completos da Idol no loadedMembers para pegar a foto real
                 const cleanMName = mInTrack.name.replace(/<[^>]*>?/gm, '').trim();
                 const fullMemData = loadedMembers.find(x => (x.nome||'').replace(/<[^>]*>?/gm, '').trim() === cleanMName);
-                
                 const photoUrl = fullMemData ? resolveImage(fullMemData.foto) : pImg(mInTrack.name, unit);
                 const isCenter = mInTrack.isCenter;
                 
@@ -632,14 +681,13 @@
                 `;
             });
         } else {
-            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center;">Nenhum membro registrado para esta música no JSON.</p>';
+            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center;">Nenhum membro registrado.</p>';
         }
     }
 
     // --- RENDER NEWS ---
     function renderNewsPost() {
-        applyTheme('All', 'export-wrapper'); // Padrão
-        
+        applyTheme('All', 'export-wrapper');
         const idx = document.getElementById("news-select").value;
         const customText = document.getElementById("news-custom-text").value;
         
@@ -647,12 +695,8 @@
 
         if(idx !== "") {
             const n = loadedNews[idx];
-            title = n.titulo;
-            cat = n.categoria;
-            data = n.data;
-            text = n.texto || "Conteúdo não disponível.";
+            title = n.titulo; cat = n.categoria; data = n.data; text = n.texto || "Conteúdo não disponível.";
         }
-
         if(customText.trim() !== "") text = customText;
 
         document.getElementById("n-title").innerHTML = title;
@@ -669,16 +713,18 @@
 
     function downloadPost() {
         const postMode = document.getElementById("post-type").value;
-        const discoViewType = document.getElementById("disco-view-type").value;
         
-        // Define qual wrapper exportar baseado no estado atual
         let wrapperId = "export-wrapper";
         let fileNamePrefix = "Post";
 
-        if(postMode === 'disco' && discoViewType === 'formation') {
+        if(postMode === 'disco' && document.getElementById("disco-view-type").value === 'formation') {
             wrapperId = "export-formation-wrapper";
             const trackTitle = document.getElementById('df-track-title').innerText;
             fileNamePrefix = `Formacao_${trackTitle}`;
+        } else if(postMode === 'group') {
+            wrapperId = "export-group-wrapper";
+            const filterName = document.getElementById("group-filter-select").value;
+            fileNamePrefix = `Elenco_${filterName}`;
         } else if(postMode === 'member') {
             const idolName = document.getElementById('p-name').innerText;
             fileNamePrefix = `Membro_${idolName}`;
@@ -694,34 +740,27 @@
         
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
 
-        // --- TRUQUE ANTI-ESTICAMENTO ---
-        // Guarda o estilo atual e remove o scale para o print sair perfeito
         const originalTransform = wrapper.style.transform;
         wrapper.style.transform = "scale(1)"; 
         
-        // Um pequeno delay (100ms) para o navegador redesenhar a tela antes de bater a foto
         setTimeout(() => {
             html2canvas(wrapper, {
-                scale: 2, // Mantém a alta resolução (Retina)
+                scale: 2, 
                 useCORS: true, 
                 backgroundColor: null,
-                // Força o canvas a ignorar a tela do celular e ler os 500px reais
                 windowWidth: 500, 
                 windowHeight: wrapper.scrollHeight 
             }).then(canvas => {
-                // Devolve o zoom para a tela não quebrar
                 wrapper.style.transform = originalTransform;
-
                 let link = document.createElement('a');
                 link.download = `${fileNamePrefix.replace(/<[^>]*>?/gm, '').trim().replace(/ /g, "_")}.png`;
                 link.href = canvas.toDataURL("image/png");
                 link.click();
                 btn.innerHTML = '<i class="fas fa-download"></i> Baixar Imagem Ativa (PNG)';
             }).catch(err => {
-                // Devolve o zoom mesmo se der erro
                 wrapper.style.transform = originalTransform;
                 console.error(err);
-                alert("Erro ao gerar a imagem. Verifique o console.");
+                alert("Erro ao gerar a imagem.");
                 btn.innerHTML = '<i class="fas fa-download"></i> Baixar Imagem Ativa (PNG)';
             });
         }, 100);
