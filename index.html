@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Melancholy Love - Post Generator</title>
+  <title>Melancholy Love - Mega Post Generator v2.1</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,900;1,900&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -12,7 +12,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <style>
-    /* --- TEMA CUTE & EMO (Pastel Goth / Punk Neobrutalism) --- */
+    /* --- TEMA CUTE & EMO --- */
     :root {
       --color-melancholy-love: #FF69B4; 
       --color-love: #E60000;            
@@ -32,7 +32,7 @@
     * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
     
     body { 
-      background-color: #333; /* Fundo escuro para a área de trabalho */
+      background-color: #222;
       font-family: 'Roboto', sans-serif; 
       padding: 20px;
       display: flex;
@@ -57,13 +57,13 @@
       gap: 15px;
     }
     
-    .control-panel select {
+    .control-panel select, .control-panel input, .control-panel textarea {
       width: 100%;
-      padding: 12px;
+      padding: 10px;
       border: var(--border);
       font-family: 'Roboto', sans-serif;
       font-weight: 900;
-      font-size: 1rem;
+      font-size: 0.9rem;
       cursor: pointer;
       box-shadow: 2px 2px 0 #000;
     }
@@ -83,22 +83,32 @@
       justify-content: center;
       align-items: center;
       gap: 10px;
+      margin-top: 10px;
     }
     .btn-download:active { transform: translate(3px, 3px); box-shadow: none; }
+
+    .ctrl-group { display: none; background: #f9f9f9; padding: 10px; border: var(--border-dashed); }
+    .ctrl-group.active { display: flex; flex-direction: column; gap: 10px; }
 
     /* =========================================
        A ÁREA DO POST (O que será exportado)
        ========================================= */
-    #export-wrapper {
+    #export-wrapper, #export-formation-wrapper {
       width: 500px;
-      min-height: 500px; /* Mantém o formato quadrado como base */
-      height: auto; /* Permite crescer infinito para baixo */
+      min-height: 500px;
+      height: auto;
       background-color: var(--bg);
       background-image: linear-gradient(var(--primary-light) 1px, transparent 1px), linear-gradient(90deg, var(--primary-light) 1px, transparent 1px);
       background-size: 20px 20px;
       position: relative;
       overflow: hidden;
       border: 4px solid #000;
+      display: none; /* Padrão escondido */
+    }
+
+    /* Mostra o wrapper ativo */
+    #export-wrapper.active-wrapper, #export-formation-wrapper.active-wrapper {
+      display: block;
     }
 
     .post-header {
@@ -108,136 +118,152 @@
       text-align: center;
       border-bottom: 4px solid var(--primary);
     }
-    .post-logo {
-      font-family: 'Montserrat', sans-serif; 
-      font-weight: 900; 
-      font-size: 1.4rem; 
-      letter-spacing: -1px;
-    }
-    .post-logo span {
-      background: var(--primary);
-      color: #000;
-      padding: 2px 8px;
-      margin-left: 5px;
-      font-style: normal;
-      transform: rotate(-3deg);
-      display: inline-block;
-    }
+    .post-logo { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: 1.4rem; letter-spacing: -1px; }
+    .post-logo span { background: var(--primary); color: #000; padding: 2px 8px; margin-left: 5px; font-style: normal; transform: rotate(-3deg); display: inline-block; }
 
-    .post-content {
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-
-    .post-idol-box {
-      display: flex;
-      gap: 20px;
-      align-items: flex-start;
-      margin-bottom: 20px;
-      z-index: 2;
-    }
-
-    .post-avatar {
-      width: 160px;
-      height: 160px;
-      border: 4px solid var(--primary);
-      background: #000;
-      object-fit: cover;
-      box-shadow: 6px 6px 0 #000;
-    }
-
-    .post-info {
-      flex: 1;
-    }
-    .post-name {
-      font-size: 2.2rem;
-      color: #000;
-      line-height: 1;
-      margin-bottom: 5px;
-    }
-    .post-tag {
-      background: var(--primary);
-      color: #fff;
-      font-weight: 900;
-      font-size: 0.8rem;
-      padding: 4px 10px;
-      display: inline-block;
-      border: 2px solid #000;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-      box-shadow: 2px 2px 0 #000;
-    }
-    .post-bio {
-      font-size: 0.85rem;
-      font-weight: 700;
-      line-height: 1.4;
-      background: #fff;
-      border: var(--border-dashed);
-      padding: 10px;
-      color: #000;
-    }
-
-    .post-history {
-      background: #fff;
-      border: var(--border);
-      padding: 15px;
-      box-shadow: 4px 4px 0 #000;
-      flex: 1;
-      z-index: 2;
-    }
-    .post-history-title {
-      font-size: 1.1rem;
-      background: #000;
-      color: var(--primary);
-      display: inline-block;
-      padding: 4px 10px;
-      margin-bottom: 15px;
-    }
+    .post-content { padding: 20px; display: flex; flex-direction: column; position: relative; z-index: 2; }
     
-    .timeline-container {
-      /* Sistema de multi-colunas: se tiver muitos itens, ele divide em dois painéis */
-      column-width: 200px;
-      column-gap: 20px;
-    }
+    .export-view { display: none; }
+    .export-view.active { display: block; }
 
-    .t-item { 
-      position: relative; 
-      margin-bottom: 12px; 
-      font-size: 0.8rem; 
-      font-weight: 900; 
-      text-transform: uppercase;
-      border-left: 3px solid #000; 
-      padding-left: 15px; 
-      margin-left: 5px;
-      break-inside: avoid; /* Evita que um item separe na metade da coluna */
-    }
-    .t-item::before { content: ''; position: absolute; left: -9px; top: 0px; width: 12px; height: 12px; background: var(--primary); border: 3px solid #000;}
-    .t-date { font-size: 0.7rem; color: #fff; background: #000; padding: 2px 5px; display: inline-block; margin-bottom: 3px;}
-
-    /* Elementos decorativos no fundo da arte */
+    /* DECORATIVOS */
     .decor-x { position: absolute; font-weight: 900; font-size: 8rem; color: rgba(0,0,0,0.05); top: 50%; right: -20px; z-index: 1; line-height: 0; pointer-events: none;}
     .decor-skull { position: absolute; font-size: 4rem; color: var(--primary); opacity: 0.2; bottom: 20px; right: 20px; z-index: 1; pointer-events: none;}
 
-    /* Responsive scale for desktop view */
+    /* LAYOUT: MEMBROS */
+    .post-idol-box { display: flex; gap: 15px; align-items: flex-start; margin-bottom: 15px; }
+    .post-avatar { width: 140px; height: 140px; border: 4px solid var(--primary); background: #000; object-fit: cover; box-shadow: 6px 6px 0 #000; }
+    .post-name { font-size: 2rem; color: #000; line-height: 1; margin-bottom: 5px; }
+    .post-tag { background: var(--primary); color: #fff; font-weight: 900; font-size: 0.8rem; padding: 4px 10px; display: inline-block; border: 2px solid #000; text-transform: uppercase; margin-bottom: 10px; box-shadow: 2px 2px 0 #000; }
+    
+    .box-panel { background: #fff; border: var(--border); padding: 15px; box-shadow: 4px 4px 0 #000; margin-bottom: 15px; }
+    .box-title { font-size: 1rem; background: #000; color: var(--primary); display: inline-block; padding: 4px 10px; margin-bottom: 10px; }
+    
+    .t-item { position: relative; margin-bottom: 10px; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; border-left: 3px solid #000; padding-left: 15px; margin-left: 5px; }
+    .t-item::before { content: ''; position: absolute; left: -9px; top: 0px; width: 12px; height: 12px; background: var(--primary); border: 3px solid #000;}
+    .t-date { font-size: 0.7rem; color: #fff; background: #000; padding: 2px 5px; display: inline-block; margin-bottom: 3px;}
+
+    .song-tag { background: #000; color: var(--primary); font-size: 0.7rem; padding: 3px 6px; border: 1px solid var(--primary); margin: 2px; display: inline-block; font-weight: bold; }
+    .song-tag.center { background: #fff; color: #000; border-color: #000; }
+
+    /* LAYOUT: DISCOGRAFIA (PADRÃO) */
+    .disco-cover-wrapper { text-align: center; margin-bottom: 15px; }
+    .disco-cover { width: 200px; height: 200px; border: 4px solid var(--primary); box-shadow: 8px 8px 0 #000; object-fit: cover; background: #000; }
+    .track-row { padding: 5px 0; border-bottom: 2px dashed #ccc; font-size: 0.85rem; font-weight: 900; text-transform: uppercase; display: flex; justify-content: space-between;}
+    .track-row:last-child { border-bottom: none; }
+
+    /* LAYOUT: DISCOGRAFIA (FORMAÇÃO SEGUNDA IMAGEM) */
+    .formation-member-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .fm-card {
+      background: #fff;
+      border: var(--border);
+      padding: 5px;
+      text-align: center;
+      box-shadow: 2px 2px 0 #000;
+      position: relative;
+    }
+    .fm-card img {
+      width: 100%;
+      aspect-ratio: 1/1;
+      object-fit: cover;
+      border: 2px solid #000;
+      background: #000;
+    }
+    .fm-name {
+      font-size: 0.6rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      margin-top: 3px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .fm-card.center {
+      border-color: var(--primary);
+      box-shadow: 4px 4px 0 #000;
+      transform: scale(1.05);
+    }
+    .fm-card.center img {
+      border-color: var(--primary);
+    }
+    .center-badge {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: #fff;
+      color: #000;
+      width: 25px;
+      height: 25px;
+      border: 2px solid #000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      box-shadow: 2px 2px 0 #000;
+    }
+
+    /* LAYOUT: NOTÍCIAS */
+    .news-modal { background: #fff; border: var(--border); box-shadow: 8px 8px 0 var(--primary); padding: 20px; position: relative; margin-top: 20px; }
+    .news-modal::before { content: 'SYSTEM_ALERT'; position: absolute; top: -12px; left: 10px; background: #000; color: #fff; font-size: 0.7rem; font-weight: bold; padding: 2px 10px; border: 2px solid #000;}
+    .news-title { font-size: 1.4rem; color: #000; margin-bottom: 10px; border-bottom: 4px solid var(--primary); padding-bottom: 5px; }
+    .news-text { font-size: 0.95rem; font-weight: 700; line-height: 1.5; white-space: pre-wrap; }
+    .news-meta { margin-top: 15px; font-size: 0.8rem; font-weight: 900; color: #666; text-align: right; }
+
     @media (max-width: 550px) {
-      #export-wrapper { transform: scale(0.65); transform-origin: top center; margin-bottom: -150px;}
+      #export-wrapper, #export-formation-wrapper { transform: scale(0.65); transform-origin: top center; margin-bottom: -150px;}
     }
   </style>
 </head>
 <body>
 
   <div class="control-panel">
-    <h2 class="font-head" style="text-align: center;"><i class="fas fa-camera-retro"></i> Post Generator</h2>
+    <h2 class="font-head" style="text-align: center;"><i class="fas fa-camera-retro"></i> Post Generator v2</h2>
     
-    <label style="font-weight: 900; font-size: 0.8rem; text-transform: uppercase;">Selecione a Idol:</label>
-    <select id="member-select" onchange="renderPostCard()"></select>
+    <label style="font-weight: 900; font-size: 0.8rem;">TIPO DE POST:</label>
+    <select id="post-type" onchange="switchMode()">
+      <option value="member">Membro (Perfil + Músicas)</option>
+      <option value="disco" selected>Discografia (Capa/Tracklist)</option>
+      <option value="news">Notícia (Comunicado)</option>
+    </select>
 
-    <button class="btn-download" onclick="downloadPost()"><i class="fas fa-download"></i> Baixar Pôster (PNG)</button>
+    <div id="ctrl-member" class="ctrl-group">
+      <label style="font-weight: 900; font-size: 0.7rem;">SELECIONE A IDOL:</label>
+      <select id="member-select" onchange="renderMemberPost()"></select>
+    </div>
+
+    <div id="ctrl-disco" class="ctrl-group active">
+      <label style="font-weight: 900; font-size: 0.7rem;">SELECIONE O LANÇAMENTO:</label>
+      <select id="disco-select" onchange="handleDiscoSelectionChange()"></select>
+      
+      <label style="font-weight: 900; font-size: 0.7rem; margin-top: 10px;">CONTEÚDO DA IMAGEM:</label>
+      <select id="disco-view-type" onchange="switchDiscoView()">
+        <option value="standard" selected>Capa + Tracklist (Padrão)</option>
+        <option value="formation">Formação de Música Específica</option>
+      </select>
+
+      <div id="formation-track-ctrl" style="display:none; margin-top:10px; padding-top:10px; border-top:1px dashed #000;">
+        <label style="font-weight: 900; font-size: 0.7rem;">ESCOLHA A MÚSICA PARA FORMAÇÃO:</label>
+        <select id="disco-track-select" onchange="renderDiscoFormationPost()"></select>
+      </div>
+    </div>
+
+    <div id="ctrl-news" class="ctrl-group">
+      <label style="font-weight: 900; font-size: 0.7rem;">SELECIONE A NOTÍCIA:</label>
+      <select id="news-select" onchange="renderNewsPost()"></select>
+      <label style="font-weight: 900; font-size: 0.7rem; margin-top:10px;">TEXTO PERSONALIZADO (Opcional):</label>
+      <textarea id="news-custom-text" rows="3" oninput="renderNewsPost()" placeholder="Se digitar aqui, substitui o texto do banco..."></textarea>
+    </div>
+
+    <button class="btn-download" onclick="downloadPost()"><i class="fas fa-download"></i> Baixar Imagem Ativa (PNG)</button>
   </div>
 
-  <div id="export-wrapper">
+  <div id="export-wrapper" class="active-wrapper">
     <div class="post-header">
       <div class="post-logo">MELANCHOLY<span id="post-logo-span">LOVE <i class="fas fa-heart"></i></span></div>
     </div>
@@ -247,21 +273,71 @@
 
     <div class="post-content">
       
-      <div class="post-idol-box">
-        <img id="p-avatar" class="post-avatar" src="" crossorigin="anonymous">
-        <div class="post-info">
-          <h2 id="p-name" class="font-head post-name">Nome</h2>
-          <div id="p-unit" class="post-tag">Unit</div>
-          <div id="p-bio" class="post-bio">Bio aqui...</div>
+      <div id="view-member" class="export-view">
+        <div class="post-idol-box">
+          <img id="p-avatar" class="post-avatar" src="" crossorigin="anonymous">
+          <div>
+            <h2 id="p-name" class="font-head post-name">Nome</h2>
+            <div id="p-unit" class="post-tag">Unit</div>
+          </div>
+        </div>
+        <div style="display:flex; gap:15px;">
+          <div class="box-panel" style="flex:1;">
+            <h4 class="font-head box-title"><i class="fas fa-history"></i> Histórico</h4>
+            <div id="p-history"></div>
+          </div>
+          <div class="box-panel" style="flex:1;">
+            <h4 class="font-head box-title"><i class="fas fa-music"></i> Músicas</h4>
+            <div id="p-songs"></div>
+          </div>
         </div>
       </div>
 
-      <div class="post-history">
-        <h4 class="font-head post-history-title"><i class="fas fa-history"></i> Histórico</h4>
-        <div id="p-history" class="timeline-container">
-            </div>
+      <div id="view-disco-standard" class="export-view active">
+        <div class="disco-cover-wrapper">
+          <img id="d-cover" class="disco-cover" src="" crossorigin="anonymous">
+          <h2 id="d-title" class="font-head post-name" style="margin-top:10px;">Titulo</h2>
+          <div id="d-tags"></div>
+        </div>
+        <div class="box-panel">
+          <h4 class="font-head box-title"><i class="fas fa-list"></i> Tracklist / Formação</h4>
+          <div id="d-tracklist"></div>
+        </div>
       </div>
 
+      <div id="view-news" class="export-view">
+        <div class="news-modal">
+          <h2 id="n-title" class="font-head news-title">TÍTULO DA NOTÍCIA</h2>
+          <div id="n-text" class="news-text">Conteúdo da notícia...</div>
+          <div class="news-meta">
+            <span id="n-cat" class="post-tag" style="float:left; margin:0;">CATEGORIA</span>
+            <span id="n-date">00/00/0000</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="export-formation-wrapper">
+    <div class="post-header">
+      <div class="post-logo">MELANCHOLY<span id="post-logo-span-f">LOVE <i class="fas fa-heart"></i></span></div>
+    </div>
+    
+    <div class="decor-x">X</div>
+    
+    <div class="post-content">
+        <div style="text-align:center; margin-bottom: 20px;">
+            <span id="df-album-tag" class="tag" style="background:var(--primary); color:#fff; font-weight:900; font-size:0.7rem; padding:2px 8px; border:2px solid #000;">ALBUM</span>
+            <h2 id="df-track-title" class="font-head" style="font-size:2.2rem; line-height:1; color:#000; margin-top:5px;">Nome da Música</h2>
+            <p id="df-kind" style="font-weight:900; text-transform:uppercase; font-size:0.8rem; color:#666;"></p>
+        </div>
+
+        <div class="box-panel">
+            <h4 class="font-head box-title"><i class="fas fa-users"></i> Formação de Membros</h4>
+            <div id="df-member-grid" class="formation-member-grid">
+                </div>
+        </div>
     </div>
   </div>
 
@@ -271,7 +347,8 @@
     var supaKey = 'sb_publishable_vF3JVZw3vDrfLM5M6xtw_w_0VJh7uwm';
     var db = window.supabase.createClient(supaUrl, supaKey);
 
-    var loadedMembers = [];
+    var loadedMembers = [], loadedDiscos = [], loadedNews = [];
+    var currentTracklistData = null; // Armazena a tracklist do álbum selecionado
 
     const pImg = (name, unit) => {
         let hexCol = 'FF69B4'; 
@@ -281,110 +358,373 @@
         return `https://ui-avatars.com/api/?name=${encodeURIComponent(cleanName)}&background=${hexCol}&color=111&size=200&font-size=0.33&bold=true`;
     };
 
+    function resolveImage(f) { 
+      if(!f) return pImg("?", "All"); 
+      return (typeof f === "string" ? f : f.publicUrl).replace(/[\[\]"]/g, ""); 
+    }
+
+    function getTracklistJSON(d) {
+        if (!d || !d.tracklist) return null;
+        let tl = typeof d.tracklist === 'string' ? d.tracklist : JSON.stringify(d.tracklist);
+        if (tl.includes('ctl48-formation-data')) {
+            const temp = document.createElement("div"); temp.innerHTML = tl; 
+            const jsonEl = temp.querySelector("#ctl48-formation-data"); 
+            if(jsonEl) { try { return JSON.parse(jsonEl.textContent.trim()); } catch(e){ return null; } }
+        }
+        try { return JSON.parse(tl); } catch(e) { return null; }
+    }
+
     async function init() {
         try {
-            const { data, error } = await db.from('members').select('*').order('created_at', { ascending: true });
-            if(data && data.length > 0) {
-                loadedMembers = data.map(m => ({ id: m.id, Nome: m.nome, Geracao: m.geracao, Foto: m.foto, SubUnit: m.subunit, Status: m.status, Perfil: m.perfil, Historico_Times: typeof m.historico_times === 'string' ? m.historico_times : JSON.stringify(m.historico_times || []) }));
-            }
-        } catch(e) { 
-            console.warn("DB error. Fallback to mock.", e); 
-            loadedMembers = [
-                { Nome: "Yua <i class='fas fa-skull'></i>", SubUnit: "Love", Foto: pImg("YUA", "Love"), Perfil: "A center misteriosa.", Historico_Times: '[{"data":"Nov 2023", "para":"Entrou para Unit: Love"}, {"data":"Dez 2023", "para":"Debut Oficial"}]' }
-            ];
-        } finally {
-            populateSelect();
+            const [memRes, discRes, newsRes] = await Promise.all([
+              db.from('members').select('*').order('created_at', { ascending: true }),
+              db.from('discos').select('*').order('created_at', { ascending: false }),
+              db.from('news').select('*').order('data', { ascending: false })
+            ]);
+
+            if(memRes.data) loadedMembers = memRes.data;
+            if(discRes.data) loadedDiscos = discRes.data;
+            if(newsRes.data) loadedNews = newsRes.data;
+
+        } catch(e) { console.warn("DB error.", e); } 
+        finally {
+            populateSelects();
+            switchMode();
         }
     }
 
-    function populateSelect() {
-        const select = document.getElementById("member-select");
-        select.innerHTML = '<option value="" disabled selected>-- Escolha --</option>';
-        
+    function populateSelects() {
+        // Members
+        const selMem = document.getElementById("member-select");
+        selMem.innerHTML = '<option value="" disabled selected>-- Escolha a Idol --</option>';
         loadedMembers.forEach((m, idx) => {
-            if(['graduada','demitida'].includes(m.Status?.toLowerCase())) return; 
-            let cleanName = m.Nome.replace(/<[^>]*>?/gm, '').trim();
-            select.innerHTML += `<option value="${idx}">${cleanName} (${m.SubUnit})</option>`;
+            if(['graduada','demitida'].includes(m.status?.toLowerCase())) return; 
+            let cleanName = (m.nome||'').replace(/<[^>]*>?/gm, '').trim();
+            selMem.innerHTML += `<option value="${idx}">${cleanName} (${m.subunit||'All'})</option>`;
+        });
+
+        // Discos
+        const selDisc = document.getElementById("disco-select");
+        selDisc.innerHTML = '<option value="" disabled selected>-- Escolha o Lançamento --</option>';
+        loadedDiscos.forEach((d, idx) => {
+            selDisc.innerHTML += `<option value="${idx}">${d.titulo} (${d.tipo})</option>`;
+        });
+
+        // News
+        const selNews = document.getElementById("news-select");
+        selNews.innerHTML = '<option value="" disabled selected>-- Escolha a Notícia --</option>';
+        loadedNews.forEach((n, idx) => {
+            selNews.innerHTML += `<option value="${idx}">${n.data} - ${n.titulo}</option>`;
         });
     }
 
-    function renderPostCard() {
-        const idx = document.getElementById("member-select").value;
-        if(idx === "") return;
-        const m = loadedMembers[idx];
+    // Gerencia a troca de tipo principal de post (Membro/Disco/News)
+    function switchMode() {
+        const mode = document.getElementById("post-type").value;
         
-        const root = document.getElementById('export-wrapper');
-        const logoSpan = document.getElementById('post-logo-span');
-        let themeColor = '#FF69B4'; 
-        let themeLight = '#FFB6C1';
+        // Toggle Controls
+        document.querySelectorAll('.ctrl-group').forEach(el => el.classList.remove('active'));
+        document.getElementById(`ctrl-${mode}`).classList.add('active');
+
+        // Toggle Views dentro do Wrapper 1 (padrão)
+        document.querySelectorAll('#export-wrapper .export-view').forEach(el => el.classList.remove('active'));
         
-        if(m.SubUnit === 'Melancholy') {
+        // Padrão: Ativa o Wrapper 1
+        document.getElementById('export-wrapper').classList.add('active-wrapper');
+        document.getElementById('export-formation-wrapper').classList.remove('active-wrapper');
+
+        // Render current
+        if(mode === 'member') {
+            document.getElementById('view-member').classList.add('active');
+            renderMemberPost();
+        }
+        if(mode === 'disco') {
+            document.getElementById('view-disco-standard').classList.add('active');
+            handleDiscoSelectionChange(); // Força reset para view padrão
+        }
+        if(mode === 'news') {
+            document.getElementById('view-news').classList.add('active');
+            renderNewsPost();
+        }
+    }
+
+    function applyTheme(unitStr, wrapperId = 'export-wrapper') {
+        const root = document.getElementById(wrapperId);
+        // Pega o span do logo correto baseado no wrapper
+        const logoSpanId = wrapperId === 'export-formation-wrapper' ? 'post-logo-span-f' : 'post-logo-span';
+        const logoSpan = document.getElementById(logoSpanId);
+        
+        let themeColor = '#FF69B4', themeLight = '#FFB6C1'; 
+        
+        if(unitStr === 'Melancholy') {
             themeColor = '#8A2BE2'; themeLight = '#D8BFD8';
             logoSpan.innerHTML = 'MELANCHOLY <i class="fas fa-skull"></i>';
-        } else if (m.SubUnit === 'Love') {
+        } else if (unitStr === 'Love') {
             themeColor = '#E60000'; themeLight = '#FFCCCC';
             logoSpan.innerHTML = 'LOVE <i class="fas fa-heart"></i>';
         } else {
             logoSpan.innerHTML = 'LOVE <i class="fas fa-heart"></i>';
         }
-
         root.style.setProperty('--primary', themeColor);
         root.style.setProperty('--primary-light', themeLight);
+        return themeColor;
+    }
 
-        document.getElementById("p-name").innerHTML = m.Nome;
-        document.getElementById("p-unit").innerHTML = `<i class="fas fa-star"></i> ${m.SubUnit} / ${m.Geracao}`;
+    // --- RENDER MEMBER ---
+    function renderMemberPost() {
+        const idx = document.getElementById("member-select").value;
+        if(idx === "") return;
+        const m = loadedMembers[idx];
+        const sub = m.subunit || 'All';
+        
+        applyTheme(sub, 'export-wrapper');
+
+        document.getElementById("p-name").innerHTML = m.nome;
+        document.getElementById("p-unit").innerHTML = `<i class="fas fa-star"></i> ${sub} / ${m.geracao}`;
         
         const imgEl = document.getElementById("p-avatar");
-        imgEl.setAttribute('crossorigin', 'anonymous');
-        imgEl.src = m.Foto || pImg(m.Nome, m.SubUnit);
+        imgEl.src = resolveImage(m.foto);
 
-        document.getElementById("p-bio").innerHTML = m.Perfil ? m.Perfil.substring(0, 100) + (m.Perfil.length > 100 ? '...' : '') : "Sem bio.";
-
-        let th = []; try { th = JSON.parse(m.Historico_Times || "[]"); } catch(e){}
-        
-        const mm = { 'Jan':1, 'Fev':2, 'Mar':3, 'Abr':4, 'Mai':5, 'Jun':6, 'Jul':7, 'Ago':8, 'Set':9, 'Out':10, 'Nov':11, 'Dez':12 };
-        th.sort((a,b) => {
-            let aP=(a.data||'').split(' '), bP=(b.data||'').split(' ');
-            let yA=parseInt(aP[1])||0, yB=parseInt(bP[1])||0;
-            return yA!==yB ? yB-yA : (mm[bP[0]]||0) - (mm[aP[0]]||0);
-        });
-
-        // Alterado para mostrar a timeline inteira (removido o slice)
-        let displayHist = th;
+        // History
+        let th = []; try { th = JSON.parse(m.historico_times || "[]"); } catch(e){}
         const histEl = document.getElementById("p-history");
+        if(th.length === 0) histEl.innerHTML = `<div style="font-weight:bold;">Ainda construindo sua história.</div>`;
+        else histEl.innerHTML = th.map(h => `<div class="t-item"><span class="t-date">${h.data}</span><br>${h.para}</div>`).join('');
+
+        // Participations (Músicas)
+        let partsHTML = "";
+        const cleanMName = (m.nome||'').replace(/<[^>]*>?/gm, '').trim();
         
-        if(displayHist.length === 0) {
-            histEl.innerHTML = `<div style="color:#000; font-weight:bold;">Ainda construindo sua história.</div>`;
+        loadedDiscos.forEach(d => {
+            let fJSON = getTracklistJSON(d);
+            if (Array.isArray(fJSON)) {
+                fJSON.forEach(track => {
+                    const memberInTrack = (track.members || []).find(tm => tm.name.replace(/<[^>]*>?/gm, '').trim() === cleanMName);
+                    if (memberInTrack) {
+                        let isCenter = memberInTrack.isCenter ? 'center' : '';
+                        partsHTML += `<div><span class="song-tag ${isCenter}">${track.kind || 'Track'}</span> ${track.name}</div>`;
+                    }
+                });
+            }
+        });
+        document.getElementById("p-songs").innerHTML = partsHTML || "Nenhuma registrada.";
+    }
+
+    // --- DISCO LOGIC ---
+
+    // Chamado quando muda o Álbum selecionado
+    function handleDiscoSelectionChange() {
+        const idx = document.getElementById("disco-select").value;
+        const trackSelect = document.getElementById("disco-track-select");
+        const trackCtrl = document.getElementById("formation-track-ctrl");
+        
+        trackSelect.innerHTML = '<option value="" disabled selected>-- Escolha a Música --</option>';
+        currentTracklistData = null;
+
+        if(idx === "") {
+            trackCtrl.style.display = 'none';
+            return;
+        }
+
+        const d = loadedDiscos[idx];
+        currentTracklistData = getTracklistJSON(d);
+
+        // Popula o seletor de músicas se houver dados
+        if(Array.isArray(currentTracklistData)) {
+            trackCtrl.style.display = 'block';
+            currentTracklistData.forEach((track, tIdx) => {
+                trackSelect.innerHTML += `<option value="${tIdx}">${track.name} (${track.kind})</option>`;
+            });
         } else {
-            histEl.innerHTML = displayHist.map(h => `<div class="t-item"><span class="t-date">${h.data}</span><br>${h.para}</div>`).join('');
+            trackCtrl.style.display = 'none';
+        }
+
+        // Reseta para view padrão e renderiza
+        document.getElementById("disco-view-type").value = "standard";
+        switchDiscoView();
+    }
+
+    // Troca entre View Padrão (Capa) e View Formação (Membros)
+    function switchDiscoView() {
+        const viewType = document.getElementById("disco-view-type").value;
+        
+        if(viewType === 'formation') {
+            // Ativa Wrapper de Formação (Segunda Imagem)
+            document.getElementById('export-wrapper').classList.remove('active-wrapper');
+            document.getElementById('export-formation-wrapper').classList.add('active-wrapper');
+            renderDiscoFormationPost(); // Tenta renderizar
+        } else {
+            // Ativa Wrapper Padrão (Capa)
+            document.getElementById('export-formation-wrapper').classList.remove('active-wrapper');
+            document.getElementById('export-wrapper').classList.add('active-wrapper');
+            // Garante que a view correta dentro do wrapper esteja ativa
+            document.querySelectorAll('#export-wrapper .export-view').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-disco-standard').classList.add('active');
+            renderDiscoStandardPost();
+        }
+    }
+
+    // --- RENDER DISCO (PADRÃO - CAPA + TRACKLIST) ---
+    function renderDiscoStandardPost() {
+        const idx = document.getElementById("disco-select").value;
+        if(idx === "") return;
+        const d = loadedDiscos[idx];
+        const unit = d.unit || 'All';
+
+        const themeCol = applyTheme(unit, 'export-wrapper');
+
+        document.getElementById("d-cover").src = resolveImage(d.capa);
+        document.getElementById("d-title").innerHTML = d.titulo;
+        document.getElementById("d-tags").innerHTML = `<span class="post-tag" style="background:#000; color:${themeCol}; border-color:${themeCol}">${d.tipo}</span>`;
+
+        let trackHTML = "Sem dados de tracklist (ctl48 JSON faltando).";
+        
+        if (Array.isArray(currentTracklistData)) {
+            trackHTML = currentTracklistData.map(t => {
+                let centerStr = "";
+                // Acha a center na estrutura JSON
+                const center = (t.members || []).find(m => m.isCenter);
+                if(center) centerStr = `<span style="font-size:0.7rem; color:#666;">(C: ${center.name})</span>`;
+                return `<div class="track-row"><span>${t.name} ${centerStr}</span> <span class="song-tag">${t.kind}</span></div>`;
+            }).join('');
+        }
+        document.getElementById("d-tracklist").innerHTML = trackHTML;
+    }
+
+    // --- RENDER DISCO (FORMAÇÃO SEGUNDA IMAGEM) ---
+    function renderDiscoFormationPost() {
+        const dIdx = document.getElementById("disco-select").value;
+        const tIdx = document.getElementById("disco-track-select").value;
+        
+        if(dIdx === "" || tIdx === "") {
+            document.getElementById("df-member-grid").innerHTML = '<p style="grid-column:1/-1; text-align:center; padding:20px; font-weight:bold;">Selecione o álbum e a música nos controles acima.</p>';
+            return;
+        }
+
+        const d = loadedDiscos[dIdx];
+        const track = currentTracklistData[tIdx];
+        const unit = d.unit || 'All';
+
+        applyTheme(unit, 'export-formation-wrapper');
+
+        document.getElementById("df-album-tag").innerHTML = d.titulo;
+        document.getElementById("df-track-title").innerHTML = track.name;
+        document.getElementById("df-kind").innerHTML = track.kind;
+
+        const grid = document.getElementById("df-member-grid");
+        grid.innerHTML = "";
+
+        if(Array.isArray(track.members)) {
+            track.members.forEach(mInTrack => {
+                // Acha os dados completos da Idol no loadedMembers para pegar a foto real
+                const cleanMName = mInTrack.name.replace(/<[^>]*>?/gm, '').trim();
+                const fullMemData = loadedMembers.find(x => (x.nome||'').replace(/<[^>]*>?/gm, '').trim() === cleanMName);
+                
+                const photoUrl = fullMemData ? resolveImage(fullMemData.foto) : pImg(mInTrack.name, unit);
+                const isCenter = mInTrack.isCenter;
+                
+                grid.innerHTML += `
+                    <div class="fm-card ${isCenter ? 'center' : ''}">
+                        ${isCenter ? '<div class="center-badge"><i class="fas fa-crown"></i></div>' : ''}
+                        <img src="${photoUrl}" crossorigin="anonymous">
+                        <div class="fm-name">${mInTrack.name}</div>
+                    </div>
+                `;
+            });
+        } else {
+            grid.innerHTML = '<p style="grid-column:1/-1; text-align:center;">Nenhum membro registrado para esta música no JSON.</p>';
+        }
+    }
+
+    // --- RENDER NEWS ---
+    function renderNewsPost() {
+        applyTheme('All', 'export-wrapper'); // Padrão
+        
+        const idx = document.getElementById("news-select").value;
+        const customText = document.getElementById("news-custom-text").value;
+        
+        let title = "COMUNICADO OFICIAL", cat = "INFO", data = "00/00/0000", text = "";
+
+        if(idx !== "") {
+            const n = loadedNews[idx];
+            title = n.titulo;
+            cat = n.categoria;
+            data = n.data;
+            text = n.texto || "Conteúdo não disponível.";
+        }
+
+        if(customText.trim() !== "") text = customText;
+
+        document.getElementById("n-title").innerHTML = title;
+        document.getElementById("n-text").innerHTML = text;
+        document.getElementById("n-cat").innerHTML = cat;
+        
+        if(data.includes('-')) {
+            const parts = data.split('-');
+            document.getElementById("n-date").innerHTML = `${parts[2]}/${parts[1]}/${parts[0]}`;
+        } else {
+            document.getElementById("n-date").innerHTML = data;
         }
     }
 
     function downloadPost() {
-        if(document.getElementById("member-select").value === "") {
-            alert("Selecione uma Idol primeiro!");
-            return;
+        const postMode = document.getElementById("post-type").value;
+        const discoViewType = document.getElementById("disco-view-type").value;
+        
+        // Define qual wrapper exportar baseado no estado atual
+        let wrapperId = "export-wrapper";
+        let fileNamePrefix = "Post";
+
+        if(postMode === 'disco' && discoViewType === 'formation') {
+            wrapperId = "export-formation-wrapper";
+            const trackTitle = document.getElementById('df-track-title').innerText;
+            fileNamePrefix = `Formacao_${trackTitle}`;
+        } else if(postMode === 'member') {
+            const idolName = document.getElementById('p-name').innerText;
+            fileNamePrefix = `Membro_${idolName}`;
+        } else if(postMode === 'disco') {
+            const albumTitle = document.getElementById('d-title').innerText;
+            fileNamePrefix = `Disco_${albumTitle}`;
+        } else if(postMode === 'news') {
+            fileNamePrefix = "Noticia";
         }
 
-        const wrapper = document.getElementById("export-wrapper");
+        const wrapper = document.getElementById(wrapperId);
         const btn = document.querySelector(".btn-download");
+        
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Gerando...';
 
-        html2canvas(wrapper, {
-            scale: 2, 
-            useCORS: true, 
-            backgroundColor: null
-        }).then(canvas => {
-            let link = document.createElement('a');
-            link.download = `Post_${document.getElementById('p-name').innerText.replace(/<[^>]*>?/gm, '').trim()}.png`;
-            link.href = canvas.toDataURL("image/png");
-            link.click();
-            btn.innerHTML = '<i class="fas fa-download"></i> Baixar Pôster (PNG)';
-        }).catch(err => {
-            console.error(err);
-            alert("Erro ao gerar a imagem. Verifique o console.");
-            btn.innerHTML = '<i class="fas fa-download"></i> Baixar Pôster (PNG)';
-        });
+        // --- TRUQUE ANTI-ESTICAMENTO ---
+        // Guarda o estilo atual e remove o scale para o print sair perfeito
+        const originalTransform = wrapper.style.transform;
+        wrapper.style.transform = "scale(1)"; 
+        
+        // Um pequeno delay (100ms) para o navegador redesenhar a tela antes de bater a foto
+        setTimeout(() => {
+            html2canvas(wrapper, {
+                scale: 2, // Mantém a alta resolução (Retina)
+                useCORS: true, 
+                backgroundColor: null,
+                // Força o canvas a ignorar a tela do celular e ler os 500px reais
+                windowWidth: 500, 
+                windowHeight: wrapper.scrollHeight 
+            }).then(canvas => {
+                // Devolve o zoom para a tela não quebrar
+                wrapper.style.transform = originalTransform;
+
+                let link = document.createElement('a');
+                link.download = `${fileNamePrefix.replace(/<[^>]*>?/gm, '').trim().replace(/ /g, "_")}.png`;
+                link.href = canvas.toDataURL("image/png");
+                link.click();
+                btn.innerHTML = '<i class="fas fa-download"></i> Baixar Imagem Ativa (PNG)';
+            }).catch(err => {
+                // Devolve o zoom mesmo se der erro
+                wrapper.style.transform = originalTransform;
+                console.error(err);
+                alert("Erro ao gerar a imagem. Verifique o console.");
+                btn.innerHTML = '<i class="fas fa-download"></i> Baixar Imagem Ativa (PNG)';
+            });
+        }, 100);
     }
 
     init();
