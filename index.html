@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Melancholy Love - Mega Post Generator v3.1</title>
+  <title>Melancholy Love - Mega Post Generator v5.1</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,900;1,900&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -91,9 +91,9 @@
     .ctrl-group.active { display: flex; flex-direction: column; gap: 10px; }
 
     /* =========================================
-       A ÁREA DO POST (O que será exportado)
+       WRAPPERS DE EXPORTAÇÃO
        ========================================= */
-    #export-wrapper, #export-formation-wrapper, #export-group-wrapper {
+    .export-container {
       width: 500px;
       min-height: 500px;
       height: auto;
@@ -106,10 +106,7 @@
       display: none; /* Padrão escondido */
     }
 
-    /* Mostra o wrapper ativo */
-    #export-wrapper.active-wrapper, #export-formation-wrapper.active-wrapper, #export-group-wrapper.active-wrapper {
-      display: block;
-    }
+    .export-container.active-wrapper { display: block; }
 
     .post-header {
       background: #000;
@@ -122,27 +119,26 @@
     .post-logo span { background: var(--primary); color: #000; padding: 2px 8px; margin-left: 5px; font-style: normal; transform: rotate(-3deg); display: inline-block; }
 
     .post-content { padding: 20px; display: flex; flex-direction: column; position: relative; z-index: 2; }
-    
     .export-view { display: none; }
     .export-view.active { display: block; }
 
     /* DECORATIVOS */
     .decor-x { position: absolute; font-weight: 900; font-size: 8rem; color: rgba(0,0,0,0.05); top: 50%; right: -20px; z-index: 1; line-height: 0; pointer-events: none;}
     .decor-skull { position: absolute; font-size: 4rem; color: var(--primary); opacity: 0.2; bottom: 20px; right: 20px; z-index: 1; pointer-events: none;}
+    .decor-cd { position: absolute; font-size: 15rem; color: var(--primary); opacity: 0.05; top: 10%; left: -20px; z-index: 1; pointer-events: none;}
 
+    /* ELEMENTOS REUTILIZÁVEIS */
+    .post-tag { background: var(--primary); color: #fff; font-weight: 900; font-size: 0.8rem; padding: 4px 10px; display: inline-block; border: 2px solid #000; text-transform: uppercase; margin-bottom: 10px; box-shadow: 2px 2px 0 #000; }
+    .box-panel { background: #fff; border: var(--border); padding: 15px; box-shadow: 4px 4px 0 #000; margin-bottom: 15px; }
+    .box-title { font-size: 1rem; background: #000; color: var(--primary); display: inline-block; padding: 4px 10px; margin-bottom: 10px; }
+    
     /* LAYOUT: MEMBROS */
     .post-idol-box { display: flex; gap: 15px; align-items: flex-start; margin-bottom: 15px; }
     .post-avatar { width: 140px; height: 140px; border: 4px solid var(--primary); background: #000; object-fit: cover; box-shadow: 6px 6px 0 #000; }
     .post-name { font-size: 2rem; color: #000; line-height: 1; margin-bottom: 5px; }
-    .post-tag { background: var(--primary); color: #fff; font-weight: 900; font-size: 0.8rem; padding: 4px 10px; display: inline-block; border: 2px solid #000; text-transform: uppercase; margin-bottom: 10px; box-shadow: 2px 2px 0 #000; }
-    
-    .box-panel { background: #fff; border: var(--border); padding: 15px; box-shadow: 4px 4px 0 #000; margin-bottom: 15px; }
-    .box-title { font-size: 1rem; background: #000; color: var(--primary); display: inline-block; padding: 4px 10px; margin-bottom: 10px; }
-    
     .t-item { position: relative; margin-bottom: 10px; font-size: 0.8rem; font-weight: 900; text-transform: uppercase; border-left: 3px solid #000; padding-left: 15px; margin-left: 5px; }
     .t-item::before { content: ''; position: absolute; left: -9px; top: 0px; width: 12px; height: 12px; background: var(--primary); border: 3px solid #000;}
     .t-date { font-size: 0.7rem; color: #fff; background: #000; padding: 2px 5px; display: inline-block; margin-bottom: 3px;}
-
     .song-tag { background: #000; color: var(--primary); font-size: 0.7rem; padding: 3px 6px; border: 1px solid var(--primary); margin: 2px; display: inline-block; font-weight: bold; }
     .song-tag.center { background: #fff; color: #000; border-color: #000; }
 
@@ -153,60 +149,13 @@
     .track-row:last-child { border-bottom: none; }
 
     /* LAYOUT: GRADES DE MEMBROS (FORMAÇÃO E GRUPO GERAL) */
-    .formation-member-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin-top: 15px;
-    }
-    .fm-card {
-      background: #fff;
-      border: var(--border);
-      padding: 5px;
-      text-align: center;
-      box-shadow: 2px 2px 0 #000;
-      position: relative;
-    }
-    .fm-card img {
-      width: 100%;
-      aspect-ratio: 1/1;
-      object-fit: cover;
-      border: 2px solid #000;
-      background: #000;
-    }
-    .fm-name {
-      font-size: 0.6rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      margin-top: 3px;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-    }
-    .fm-card.center {
-      border-color: var(--primary);
-      box-shadow: 4px 4px 0 #000;
-      transform: scale(1.05);
-    }
-    .fm-card.center img {
-      border-color: var(--primary);
-    }
-    .center-badge {
-      position: absolute;
-      top: -10px;
-      right: -10px;
-      background: #fff;
-      color: #000;
-      width: 25px;
-      height: 25px;
-      border: 2px solid #000;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.9rem;
-      box-shadow: 2px 2px 0 #000;
-    }
+    .formation-member-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 15px; }
+    .fm-card { width: 105px; background: #fff; border: var(--border); padding: 5px; text-align: center; box-shadow: 2px 2px 0 #000; position: relative; }
+    .fm-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border: 2px solid #000; background: #000; }
+    .fm-name { font-size: 0.6rem; font-weight: 900; text-transform: uppercase; margin-top: 3px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .fm-card.center { border-color: var(--primary); box-shadow: 4px 4px 0 #000; transform: scale(1.05); }
+    .fm-card.center img { border-color: var(--primary); }
+    .center-badge { position: absolute; top: -10px; right: -10px; background: #fff; color: #000; width: 25px; height: 25px; border: 2px solid #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; box-shadow: 2px 2px 0 #000; z-index: 2;}
 
     /* LAYOUT: NOTÍCIAS */
     .news-modal { background: #fff; border: var(--border); box-shadow: 8px 8px 0 var(--primary); padding: 20px; position: relative; margin-top: 20px; }
@@ -215,29 +164,86 @@
     .news-text { font-size: 0.95rem; font-weight: 700; line-height: 1.5; white-space: pre-wrap; }
     .news-meta { margin-top: 15px; font-size: 0.8rem; font-weight: 900; color: #666; text-align: right; }
 
+    /* LAYOUT: SENBATSU PYRAMID */
+    .senbatsu-row-container { display: flex; justify-content: center; gap: 12px; align-items: flex-end; margin-bottom: 15px; }
+    .senbatsu-row-container:last-child { margin-bottom: 0; }
+    .s-card { width: 65px; text-align: center; position: relative; }
+    .s-card img { width: 65px; height: 65px; border: 3px solid #333; object-fit: cover; background: #000; box-shadow: 3px 3px 0 var(--primary); }
+    .s-card.center { width: 90px; z-index: 5; margin: 0 5px; }
+    .s-card.center img { width: 90px; height: 90px; border: 4px solid var(--primary); box-shadow: 4px 4px 0 #fff; }
+    .s-name { font-size: 0.6rem; font-weight: 900; background: #fff; color: #000; border: 2px solid #000; margin-top: -12px; position: relative; z-index: 6; padding: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; }
+    .s-center-badge { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--primary); color: #fff; border: 2px solid #000; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; z-index: 7; box-shadow: 2px 2px 0 #000;}
+
     @media (max-width: 550px) {
-      #export-wrapper, #export-formation-wrapper, #export-group-wrapper { transform: scale(0.65); transform-origin: top center; margin-bottom: -150px;}
+      .export-container { transform: scale(0.65); transform-origin: top center; margin-bottom: -150px;}
     }
   </style>
 </head>
 <body>
 
   <div class="control-panel">
-    <h2 class="font-head" style="text-align: center;"><i class="fas fa-camera-retro"></i> Post Generator v3</h2>
+    <h2 class="font-head" style="text-align: center;"><i class="fas fa-camera-retro"></i> Post Generator v5.1</h2>
     
     <label style="font-weight: 900; font-size: 0.8rem;">TIPO DE POST:</label>
     <select id="post-type" onchange="switchMode()">
+      <option value="senbatsu" selected>Anúncio de Formação (Estilo AKB/Pirâmide)</option>
+      <option value="single-ann">Anúncio de Lançamento (Single/Álbum)</option>
+      <option value="disco">Discografia (Capa / Formação Simples)</option>
       <option value="member">Membro Específico (Perfil + Músicas)</option>
       <option value="group">Elenco / Visão Geral (Todas as Membros)</option>
-      <option value="disco" selected>Discografia (Capa / Formação)</option>
       <option value="news">Notícia (Comunicado)</option>
     </select>
 
+    <!-- Controles de Senbatsu -->
+    <div id="ctrl-senbatsu" class="ctrl-group active">
+      <label style="font-weight: 900; font-size: 0.7rem;">SELECIONE O LANÇAMENTO:</label>
+      <select id="senbatsu-disco-select" onchange="handleSenbatsuSelectionChange()"></select>
+
+      <div id="senbatsu-track-ctrl" style="display:none; margin-top:10px; padding-top:10px; border-top:1px dashed #000;">
+        <label style="font-weight: 900; font-size: 0.7rem;">ESCOLHA A MÚSICA DA FORMAÇÃO:</label>
+        <select id="senbatsu-track-select" onchange="renderSenbatsuPost()"></select>
+      </div>
+    </div>
+
+    <!-- Controles de Anúncio de Single -->
+    <div id="ctrl-single-ann" class="ctrl-group">
+      <label style="font-weight: 900; font-size: 0.7rem;">SELECIONE O LANÇAMENTO:</label>
+      <select id="single-ann-select" onchange="renderSingleAnnPost()"></select>
+
+      <label style="font-weight: 900; font-size: 0.7rem; margin-top: 10px;">TAG PRINCIPAL (Ex: COMEBACK):</label>
+      <input type="text" id="single-ann-tag" value="NOVO LANÇAMENTO" oninput="renderSingleAnnPost()">
+
+      <label style="font-weight: 900; font-size: 0.7rem; margin-top: 10px;">DATA / STATUS (Ex: JÁ DISPONÍVEL):</label>
+      <input type="text" id="single-ann-date" value="EM BREVE" oninput="renderSingleAnnPost()">
+
+      <label style="font-weight: 900; font-size: 0.7rem; margin-top: 10px;">MENSAGEM EXTRA (Opcional):</label>
+      <textarea id="single-ann-msg" rows="2" oninput="renderSingleAnnPost()" placeholder="Ex: Assista agora ao MV no YouTube!"></textarea>
+    </div>
+
+    <!-- Controles de Disco Padrão -->
+    <div id="ctrl-disco" class="ctrl-group">
+      <label style="font-weight: 900; font-size: 0.7rem;">SELECIONE O LANÇAMENTO:</label>
+      <select id="disco-select" onchange="handleDiscoSelectionChange()"></select>
+      
+      <label style="font-weight: 900; font-size: 0.7rem; margin-top: 10px;">CONTEÚDO DA IMAGEM:</label>
+      <select id="disco-view-type" onchange="switchDiscoView()">
+        <option value="standard" selected>Capa + Tracklist (Padrão)</option>
+        <option value="formation">Formação de Música em Grid</option>
+      </select>
+
+      <div id="formation-track-ctrl" style="display:none; margin-top:10px; padding-top:10px; border-top:1px dashed #000;">
+        <label style="font-weight: 900; font-size: 0.7rem;">ESCOLHA A MÚSICA PARA FORMAÇÃO:</label>
+        <select id="disco-track-select" onchange="renderDiscoFormationPost()"></select>
+      </div>
+    </div>
+
+    <!-- Controles de Membro Individual -->
     <div id="ctrl-member" class="ctrl-group">
       <label style="font-weight: 900; font-size: 0.7rem;">SELECIONE A IDOL:</label>
       <select id="member-select" onchange="renderMemberPost()"></select>
     </div>
 
+    <!-- Controles de Grupo -->
     <div id="ctrl-group" class="ctrl-group">
       <label style="font-weight: 900; font-size: 0.7rem;">FILTRAR POR UNIT:</label>
       <select id="group-filter-select" onchange="renderGroupPost()">
@@ -247,22 +253,7 @@
       </select>
     </div>
 
-    <div id="ctrl-disco" class="ctrl-group active">
-      <label style="font-weight: 900; font-size: 0.7rem;">SELECIONE O LANÇAMENTO:</label>
-      <select id="disco-select" onchange="handleDiscoSelectionChange()"></select>
-      
-      <label style="font-weight: 900; font-size: 0.7rem; margin-top: 10px;">CONTEÚDO DA IMAGEM:</label>
-      <select id="disco-view-type" onchange="switchDiscoView()">
-        <option value="standard" selected>Capa + Tracklist (Padrão)</option>
-        <option value="formation">Formação de Música Específica</option>
-      </select>
-
-      <div id="formation-track-ctrl" style="display:none; margin-top:10px; padding-top:10px; border-top:1px dashed #000;">
-        <label style="font-weight: 900; font-size: 0.7rem;">ESCOLHA A MÚSICA PARA FORMAÇÃO:</label>
-        <select id="disco-track-select" onchange="renderDiscoFormationPost()"></select>
-      </div>
-    </div>
-
+    <!-- Controles de Notícia -->
     <div id="ctrl-news" class="ctrl-group">
       <label style="font-weight: 900; font-size: 0.7rem;">SELECIONE A NOTÍCIA:</label>
       <select id="news-select" onchange="renderNewsPost()"></select>
@@ -273,16 +264,54 @@
     <button class="btn-download" onclick="downloadPost()"><i class="fas fa-download"></i> Baixar Imagem Ativa (PNG)</button>
   </div>
 
-  <div id="export-wrapper" class="active-wrapper">
+  <!-- WRAPPER 0.5: SENBATSU PYRAMID -->
+  <div id="export-senbatsu-wrapper" class="export-container active-wrapper">
+    <div class="post-header">
+      <div class="post-logo">MELANCHOLY<span>LOVE <i class="fas fa-heart"></i></span></div>
+    </div>
+    <div class="decor-x">X</div>
+    <div class="post-content">
+        <div style="text-align:center; margin-bottom: 20px;">
+            <span id="sb-tag" class="tag" style="background:var(--primary); color:#fff; font-weight:900; font-size:0.7rem; padding:4px 10px; border:2px solid #000; letter-spacing: 1px;">SENBATSU FORMATION</span>
+            <h2 id="sb-title" class="font-head" style="font-size:2.2rem; line-height:1; color:#000; margin-top:8px;">Nome da Música</h2>
+            <p id="sb-album" style="font-weight:900; text-transform:uppercase; font-size:0.85rem; color:#666;"></p>
+        </div>
+        
+        <div class="box-panel" style="background: #1a1a1a; border-color: var(--primary); padding: 30px 10px; box-shadow: 6px 6px 0 var(--primary);">
+            <div id="sb-pyramid" style="display:flex; flex-direction:column; gap:25px; align-items:center;">
+                <!-- As fileiras serão geradas aqui via JS -->
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <!-- WRAPPER 0: ANÚNCIO DE SINGLE -->
+  <div id="export-single-ann-wrapper" class="export-container">
     <div class="post-header">
       <div class="post-logo">MELANCHOLY<span>LOVE <i class="fas fa-heart"></i></span></div>
     </div>
     
     <div class="decor-x">X</div>
+    <div class="decor-cd"><i class="fas fa-compact-disc"></i></div>
+
+    <div class="post-content" style="align-items: center; text-align: center; justify-content: center; min-height: 420px; padding-top: 30px;">
+      <div id="sa-tag" class="post-tag" style="font-size: 1.1rem; margin-bottom: 20px; transform: rotate(-2deg); padding: 5px 15px;">NOVO LANÇAMENTO</div>
+      <img id="sa-cover" src="" crossorigin="anonymous" style="width: 240px; height: 240px; object-fit: cover; border: 6px solid var(--primary); box-shadow: 12px 12px 0 #000; margin-bottom: 20px; background: #000;">
+      <h2 id="sa-title" class="font-head" style="font-size: 2.2rem; line-height: 1.1; color: #000; margin-bottom: 15px; text-transform: uppercase;">TITULO</h2>
+      <p id="sa-msg" style="font-weight: 700; font-size: 0.95rem; max-width: 85%; margin-bottom: 20px; background: #fff; border: var(--border-dashed); padding: 10px;"></p>
+      <div id="sa-date" style="background: #000; color: var(--primary); font-weight: 900; font-size: 1.3rem; padding: 10px 25px; border: 4px solid var(--primary); text-transform: uppercase; box-shadow: 4px 4px 0 #000; transform: rotate(1deg);">EM BREVE</div>
+    </div>
+  </div>
+
+  <!-- WRAPPER 1: POST PADRÃO (MEMBROS, DISCO PADRÃO, NEWS) -->
+  <div id="export-wrapper" class="export-container">
+    <div class="post-header">
+      <div class="post-logo">MELANCHOLY<span>LOVE <i class="fas fa-heart"></i></span></div>
+    </div>
+    <div class="decor-x">X</div>
     <div class="decor-skull"><i class="fas fa-skull"></i></div>
 
     <div class="post-content">
-      
       <div id="view-member" class="export-view">
         <div class="post-idol-box">
           <img id="p-avatar" class="post-avatar" src="" crossorigin="anonymous">
@@ -296,14 +325,14 @@
             <h4 class="font-head box-title"><i class="fas fa-history"></i> Histórico</h4>
             <div id="p-history"></div>
           </div>
-          <div class="box-panel" style="flex:1;">
+          <div class="box-panel" style="flex:1; padding:10px;">
             <h4 class="font-head box-title"><i class="fas fa-music"></i> Músicas</h4>
             <div id="p-songs"></div>
           </div>
         </div>
       </div>
 
-      <div id="view-disco-standard" class="export-view active">
+      <div id="view-disco-standard" class="export-view">
         <div class="disco-cover-wrapper">
           <img id="d-cover" class="disco-cover" src="" crossorigin="anonymous">
           <h2 id="d-title" class="font-head post-name" style="margin-top:10px;">Titulo</h2>
@@ -325,11 +354,11 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 
-  <div id="export-formation-wrapper">
+  <!-- WRAPPER 2: POST DE FORMAÇÃO DE MÚSICA (GRID) -->
+  <div id="export-formation-wrapper" class="export-container">
     <div class="post-header">
       <div class="post-logo">MELANCHOLY<span>LOVE <i class="fas fa-heart"></i></span></div>
     </div>
@@ -347,7 +376,8 @@
     </div>
   </div>
 
-  <div id="export-group-wrapper">
+  <!-- WRAPPER 3: POST DE VISÃO GERAL DE GRUPO/UNIT -->
+  <div id="export-group-wrapper" class="export-container">
     <div class="post-header">
       <div class="post-logo">MELANCHOLY<span>LOVE <i class="fas fa-heart"></i></span></div>
     </div>
@@ -371,6 +401,7 @@
 
     var loadedMembers = [], loadedDiscos = [], loadedNews = [];
     var currentTracklistData = null; 
+    var currentSenbatsuTracklistData = null;
 
     const pImg = (name, unit) => {
         let hexCol = 'FF69B4'; 
@@ -425,11 +456,20 @@
             selMem.innerHTML += `<option value="${idx}">${cleanName} (${m.subunit||'All'})</option>`;
         });
 
-        // Discos
+        // Discos / Single Ann / Senbatsu
         const selDisc = document.getElementById("disco-select");
+        const selSingleAnn = document.getElementById("single-ann-select");
+        const selSenbatsu = document.getElementById("senbatsu-disco-select");
+        
         selDisc.innerHTML = '<option value="" disabled selected>-- Escolha o Lançamento --</option>';
+        selSingleAnn.innerHTML = '<option value="" disabled selected>-- Escolha o Lançamento --</option>';
+        selSenbatsu.innerHTML = '<option value="" disabled selected>-- Escolha o Lançamento --</option>';
+        
         loadedDiscos.forEach((d, idx) => {
-            selDisc.innerHTML += `<option value="${idx}">${d.titulo} (${d.tipo})</option>`;
+            const opt = `<option value="${idx}">${d.titulo} (${d.tipo})</option>`;
+            selDisc.innerHTML += opt;
+            selSingleAnn.innerHTML += opt;
+            selSenbatsu.innerHTML += opt;
         });
 
         // News
@@ -440,7 +480,29 @@
         });
     }
 
-    // Gerencia a troca de tipo principal de post
+    function populateDiscoTracks() {
+        const idx = document.getElementById("disco-select").value;
+        const trackSelect = document.getElementById("disco-track-select");
+        const trackCtrl = document.getElementById("formation-track-ctrl");
+        
+        trackSelect.innerHTML = '<option value="" disabled selected>-- Escolha a Música --</option>';
+        currentTracklistData = null;
+
+        if(idx === "") { trackCtrl.style.display = 'none'; return; }
+
+        const d = loadedDiscos[idx];
+        currentTracklistData = getTracklistJSON(d);
+
+        if(Array.isArray(currentTracklistData)) {
+            trackCtrl.style.display = 'block';
+            currentTracklistData.forEach((track, tIdx) => {
+                trackSelect.innerHTML += `<option value="${tIdx}">${track.name} (${track.kind})</option>`;
+            });
+        } else {
+            trackCtrl.style.display = 'none';
+        }
+    }
+
     function switchMode() {
         const mode = document.getElementById("post-type").value;
         
@@ -449,47 +511,50 @@
         document.getElementById(`ctrl-${mode}`).classList.add('active');
 
         // Esconde todos os wrappers
-        document.getElementById('export-wrapper').classList.remove('active-wrapper');
-        document.getElementById('export-formation-wrapper').classList.remove('active-wrapper');
-        document.getElementById('export-group-wrapper').classList.remove('active-wrapper');
+        document.querySelectorAll('.export-container').forEach(el => el.classList.remove('active-wrapper'));
 
-        // Lógica de ativação dos wrappers
-        if(mode === 'group') {
+        // Lógica segura de ativação (sem referências circulares)
+        if(mode === 'senbatsu') {
+            document.getElementById('export-senbatsu-wrapper').classList.add('active-wrapper');
+            handleSenbatsuSelectionChange(); 
+        } else if(mode === 'single-ann') {
+            document.getElementById('export-single-ann-wrapper').classList.add('active-wrapper');
+            renderSingleAnnPost();
+        } else if(mode === 'group') {
             document.getElementById('export-group-wrapper').classList.add('active-wrapper');
             renderGroupPost();
-        } else if (mode === 'disco' && document.getElementById("disco-view-type").value === 'formation') {
-            document.getElementById('export-formation-wrapper').classList.add('active-wrapper');
-            renderDiscoFormationPost();
-        } else {
-            // Membros individuais, Disco Padrão e News caem no wrapper 1
+        } else if(mode === 'disco') {
+            const viewType = document.getElementById("disco-view-type").value;
+            if(viewType === 'formation') {
+                document.getElementById('export-formation-wrapper').classList.add('active-wrapper');
+                if (!currentTracklistData) populateDiscoTracks();
+                renderDiscoFormationPost();
+            } else {
+                document.getElementById('export-wrapper').classList.add('active-wrapper');
+                document.querySelectorAll('#export-wrapper .export-view').forEach(el => el.classList.remove('active'));
+                document.getElementById('view-disco-standard').classList.add('active');
+                if (!currentTracklistData) populateDiscoTracks();
+                renderDiscoStandardPost(); 
+            }
+        } else if(mode === 'member') {
             document.getElementById('export-wrapper').classList.add('active-wrapper');
             document.querySelectorAll('#export-wrapper .export-view').forEach(el => el.classList.remove('active'));
-            
-            if(mode === 'member') {
-                document.getElementById('view-member').classList.add('active');
-                renderMemberPost();
-            }
-            if(mode === 'disco') {
-                document.getElementById('view-disco-standard').classList.add('active');
-                handleDiscoSelectionChange(); 
-            }
-            if(mode === 'news') {
-                document.getElementById('view-news').classList.add('active');
-                renderNewsPost();
-            }
+            document.getElementById('view-member').classList.add('active');
+            renderMemberPost();
+        } else if(mode === 'news') {
+            document.getElementById('export-wrapper').classList.add('active-wrapper');
+            document.querySelectorAll('#export-wrapper .export-view').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-news').classList.add('active');
+            renderNewsPost();
         }
     }
 
-    // --- NOVA LÓGICA DE THEME E LOGO ---
     function applyTheme(unitStr, wrapperId = 'export-wrapper') {
         const root = document.getElementById(wrapperId);
-        
-        // Pega a div inteira do logo dentro do wrapper ativo
         const logoDiv = root.querySelector('.post-logo');
         
         let themeColor = '#FF69B4', themeLight = '#FFB6C1'; 
         
-        // Reescreve o logo para remover o texto duplicado
         if(unitStr === 'Melancholy') {
             themeColor = '#8A2BE2'; themeLight = '#D8BFD8';
             logoDiv.innerHTML = '<span>MELANCHOLY <i class="fas fa-skull"></i></span>';
@@ -504,6 +569,144 @@
         root.style.setProperty('--primary', themeColor);
         root.style.setProperty('--primary-light', themeLight);
         return themeColor;
+    }
+
+    // --- RENDER SENBATSU (AKB STYLE) ---
+    function handleSenbatsuSelectionChange() {
+        const idx = document.getElementById("senbatsu-disco-select").value;
+        const trackSelect = document.getElementById("senbatsu-track-select");
+        const trackCtrl = document.getElementById("senbatsu-track-ctrl");
+        
+        trackSelect.innerHTML = '<option value="" disabled selected>-- Escolha a Música --</option>';
+        currentSenbatsuTracklistData = null;
+
+        if(idx === "") { trackCtrl.style.display = 'none'; return; }
+
+        const d = loadedDiscos[idx];
+        currentSenbatsuTracklistData = getTracklistJSON(d);
+
+        if(Array.isArray(currentSenbatsuTracklistData)) {
+            trackCtrl.style.display = 'block';
+            currentSenbatsuTracklistData.forEach((track, tIdx) => {
+                trackSelect.innerHTML += `<option value="${tIdx}">${track.name} (${track.kind})</option>`;
+            });
+        } else {
+            trackCtrl.style.display = 'none';
+        }
+        renderSenbatsuPost();
+    }
+
+    function renderSenbatsuPost() {
+        const dIdx = document.getElementById("senbatsu-disco-select").value;
+        const tIdx = document.getElementById("senbatsu-track-select").value;
+        
+        const pyramidDiv = document.getElementById("sb-pyramid");
+
+        if(dIdx === "" || tIdx === "") {
+            pyramidDiv.innerHTML = '<p style="color:#fff; text-align:center; padding:20px; font-weight:bold;">Selecione o álbum e a música.</p>';
+            return;
+        }
+
+        const d = loadedDiscos[dIdx];
+        const track = currentSenbatsuTracklistData[tIdx];
+        const unit = d.unit || 'All';
+
+        applyTheme(unit, 'export-senbatsu-wrapper');
+
+        document.getElementById("sb-title").innerHTML = track.name;
+        document.getElementById("sb-album").innerHTML = d.titulo;
+
+        pyramidDiv.innerHTML = "";
+
+        if(Array.isArray(track.members) && track.members.length > 0) {
+            
+            // LÓGICA DE DIVISÃO DE FILEIRAS (PIRÂMIDE)
+            let members = [...track.members];
+            let centers = members.filter(m => m.isCenter);
+            let others = members.filter(m => !m.isCenter);
+            let n = members.length;
+            let rows = [];
+
+            if (n <= 4) {
+                rows.push({ type: 'front', members: others }); 
+            } else if (n <= 9) {
+                let backCount = Math.floor(others.length / 2);
+                rows.push({ type: 'back', members: others.splice(0, backCount) });
+                rows.push({ type: 'front', members: others });
+            } else {
+                let frontOthersCount = Math.floor(others.length / 3);
+                let midCount = Math.floor((others.length - frontOthersCount) / 2);
+                let backCount = others.length - frontOthersCount - midCount;
+
+                rows.push({ type: 'back', members: others.splice(0, backCount) });
+                rows.push({ type: 'mid', members: others.splice(0, midCount) });
+                rows.push({ type: 'front', members: others });
+            }
+
+            // Inserir Center(s) no meio da primeira fileira (front)
+            let frontRow = rows[rows.length - 1];
+            let fOthers = frontRow.members;
+            let midIndex = Math.floor(fOthers.length / 2);
+            fOthers.splice(midIndex, 0, ...centers);
+            frontRow.members = fOthers;
+
+            // Renderizar as fileiras em HTML
+            let html = rows.map(r => {
+                let rowHtml = r.members.map(m => {
+                    const cleanMName = m.name.replace(/<[^>]*>?/gm, '').trim();
+                    const fullMemData = loadedMembers.find(x => (x.nome||'').replace(/<[^>]*>?/gm, '').trim() === cleanMName);
+                    const photoUrl = fullMemData ? resolveImage(fullMemData.foto) : pImg(m.name, unit);
+
+                    return `
+                        <div class="s-card ${m.isCenter ? 'center' : ''}">
+                            ${m.isCenter ? '<div class="s-center-badge"><i class="fas fa-crown"></i></div>' : ''}
+                            <img src="${photoUrl}" crossorigin="anonymous">
+                            <div class="s-name">${m.name}</div>
+                        </div>
+                    `;
+                }).join('');
+
+                return `<div class="senbatsu-row-container">${rowHtml}</div>`;
+            }).join('');
+
+            pyramidDiv.innerHTML = html;
+
+        } else {
+            pyramidDiv.innerHTML = '<p style="color:#fff; text-align:center;">Nenhum membro registrado na Tracklist.</p>';
+        }
+    }
+
+    // --- RENDER SINGLE ANNOUNCEMENT ---
+    function renderSingleAnnPost() {
+        const idx = document.getElementById("single-ann-select").value;
+        const tagText = document.getElementById("single-ann-tag").value || "LANÇAMENTO";
+        const dateText = document.getElementById("single-ann-date").value || "EM BREVE";
+        const msgText = document.getElementById("single-ann-msg").value;
+
+        let unit = 'All';
+        
+        if(idx !== "") {
+            const d = loadedDiscos[idx];
+            unit = d.unit || 'All';
+            document.getElementById("sa-cover").src = resolveImage(d.capa);
+            document.getElementById("sa-title").innerHTML = d.titulo;
+        } else {
+            document.getElementById("sa-cover").src = "";
+            document.getElementById("sa-title").innerHTML = "ESCOLHA UM ÁLBUM";
+        }
+
+        applyTheme(unit, 'export-single-ann-wrapper');
+
+        document.getElementById("sa-tag").innerHTML = tagText;
+        document.getElementById("sa-date").innerHTML = dateText;
+        
+        const msgEl = document.getElementById("sa-msg");
+        if(msgText.trim() === "") {
+            msgEl.style.display = 'none';
+        } else {
+            msgEl.style.display = 'block';
+            msgEl.innerHTML = msgText;
+        }
     }
 
     // --- RENDER MEMBER INDIVIDUAL ---
@@ -526,14 +729,36 @@
 
         let partsHTML = "";
         const cleanMName = (m.nome||'').replace(/<[^>]*>?/gm, '').trim();
+        
         loadedDiscos.forEach(d => {
             let fJSON = getTracklistJSON(d);
+            let unitBadgeText = "MELANCHOLY LOVE";
+            let unitBadgeColor = "#FF69B4";
+            let unitTextColor = "#000";
+            
+            if (d.unit === 'Melancholy') {
+                unitBadgeText = "MELANCHOLY";
+                unitBadgeColor = "#8A2BE2";
+                unitTextColor = "#fff";
+            } else if (d.unit === 'Love') {
+                unitBadgeText = "LOVE";
+                unitBadgeColor = "#E60000";
+                unitTextColor = "#fff";
+            }
+
             if (Array.isArray(fJSON)) {
                 fJSON.forEach(track => {
                     const memberInTrack = (track.members || []).find(tm => tm.name.replace(/<[^>]*>?/gm, '').trim() === cleanMName);
                     if (memberInTrack) {
                         let isCenter = memberInTrack.isCenter ? 'center' : '';
-                        partsHTML += `<div><span class="song-tag ${isCenter}">${track.kind || 'Track'}</span> ${track.name}</div>`;
+                        partsHTML += `
+                            <div style="margin-bottom: 8px; border-bottom: 1px dashed #ccc; padding-bottom: 5px;">
+                                <div style="margin-bottom: 4px;">
+                                    <span style="background:${unitBadgeColor}; color:${unitTextColor}; font-size:0.55rem; padding:2px 5px; border: 1px solid #000; font-weight:900; text-transform:uppercase;">${unitBadgeText}</span>
+                                    <span class="song-tag ${isCenter}" style="font-size:0.55rem;">${track.kind || 'Track'}</span>
+                                </div>
+                                <div style="font-weight: 700; font-size: 0.85rem; padding-left:2px;">${track.name}</div>
+                            </div>`;
                     }
                 });
             }
@@ -590,34 +815,37 @@
         }
     }
 
-    // --- DISCO LOGIC ---
+    // --- DISCO LOGIC (Seguro contra loopings) ---
     function handleDiscoSelectionChange() {
-        const idx = document.getElementById("disco-select").value;
-        const trackSelect = document.getElementById("disco-track-select");
-        const trackCtrl = document.getElementById("formation-track-ctrl");
-        
-        trackSelect.innerHTML = '<option value="" disabled selected>-- Escolha a Música --</option>';
-        currentTracklistData = null;
-
-        if(idx === "") { trackCtrl.style.display = 'none'; return; }
-
-        const d = loadedDiscos[idx];
-        currentTracklistData = getTracklistJSON(d);
-
-        if(Array.isArray(currentTracklistData)) {
-            trackCtrl.style.display = 'block';
-            currentTracklistData.forEach((track, tIdx) => {
-                trackSelect.innerHTML += `<option value="${tIdx}">${track.name} (${track.kind})</option>`;
-            });
-        } else {
-            trackCtrl.style.display = 'none';
-        }
-
+        populateDiscoTracks();
         document.getElementById("disco-view-type").value = "standard";
-        switchDiscoView();
+        
+        // Ajusta as telas diretamente sem chamar switchMode()
+        document.querySelectorAll('.export-container').forEach(el => el.classList.remove('active-wrapper'));
+        document.getElementById('export-wrapper').classList.add('active-wrapper');
+        document.querySelectorAll('#export-wrapper .export-view').forEach(el => el.classList.remove('active'));
+        document.getElementById('view-disco-standard').classList.add('active');
+        
+        renderDiscoStandardPost();
     }
 
-    function switchDiscoView() { switchMode(); }
+    function switchDiscoView() { 
+        // Apenas alterna as telas do disco sem chamar o switchMode() completo
+        const viewType = document.getElementById("disco-view-type").value;
+        document.querySelectorAll('.export-container').forEach(el => el.classList.remove('active-wrapper'));
+        
+        if(viewType === 'formation') {
+            document.getElementById('export-formation-wrapper').classList.add('active-wrapper');
+            if (!currentTracklistData) populateDiscoTracks();
+            renderDiscoFormationPost();
+        } else {
+            document.getElementById('export-wrapper').classList.add('active-wrapper');
+            document.querySelectorAll('#export-wrapper .export-view').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-disco-standard').classList.add('active');
+            if (!currentTracklistData) populateDiscoTracks();
+            renderDiscoStandardPost();
+        }
+    }
 
     function renderDiscoStandardPost() {
         const idx = document.getElementById("disco-select").value;
@@ -717,10 +945,18 @@
         let wrapperId = "export-wrapper";
         let fileNamePrefix = "Post";
 
-        if(postMode === 'disco' && document.getElementById("disco-view-type").value === 'formation') {
+        if(postMode === 'senbatsu') {
+            wrapperId = "export-senbatsu-wrapper";
+            const trackTitle = document.getElementById('sb-title').innerText;
+            fileNamePrefix = `Senbatsu_${trackTitle}`;
+        } else if(postMode === 'single-ann') {
+            wrapperId = "export-single-ann-wrapper";
+            const singleTitle = document.getElementById('sa-title').innerText;
+            fileNamePrefix = `Anuncio_${singleTitle}`;
+        } else if(postMode === 'disco' && document.getElementById("disco-view-type").value === 'formation') {
             wrapperId = "export-formation-wrapper";
             const trackTitle = document.getElementById('df-track-title').innerText;
-            fileNamePrefix = `Formacao_${trackTitle}`;
+            fileNamePrefix = `FormacaoGrid_${trackTitle}`;
         } else if(postMode === 'group') {
             wrapperId = "export-group-wrapper";
             const filterName = document.getElementById("group-filter-select").value;
