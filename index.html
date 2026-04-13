@@ -722,7 +722,19 @@
         document.getElementById("p-unit").innerHTML = `<i class="fas fa-star"></i> ${sub} / ${m.geracao}`;
         document.getElementById("p-avatar").src = resolveImage(m.foto);
 
-        let th = []; try { th = JSON.parse(m.historico_times || "[]"); } catch(e){}
+        let th = []; 
+        try { 
+            let rawHist = m.Historico_Times || m.historico_times;
+            th = typeof rawHist === 'string' ? JSON.parse(rawHist) : (rawHist || []); 
+        } catch(e){}
+
+        const mm = { 'Jan':1, 'Fev':2, 'Mar':3, 'Abr':4, 'Mai':5, 'Jun':6, 'Jul':7, 'Ago':8, 'Set':9, 'Out':10, 'Nov':11, 'Dez':12 };
+        th.sort((a,b) => {
+            let aP=(a.data||'').split(' '), bP=(b.data||'').split(' ');
+            let yA=parseInt(aP[1])||0, yB=parseInt(bP[1])||0;
+            return yA!==yB ? yB-yA : (mm[bP[0]]||0) - (mm[aP[0]]||0);
+        });
+
         const histEl = document.getElementById("p-history");
         if(th.length === 0) histEl.innerHTML = `<div style="font-weight:bold;">Ainda construindo sua história.</div>`;
         else histEl.innerHTML = th.map(h => `<div class="t-item"><span class="t-date">${h.data}</span><br>${h.para}</div>`).join('');
