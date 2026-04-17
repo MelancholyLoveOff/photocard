@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Melancholy Love - Mega Post Generator v5.1</title>
+  <title>Melancholy Love - Mega Post Generator v5.2</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,700;0,900;1,900&family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -108,6 +108,19 @@
 
     .export-container.active-wrapper { display: block; }
 
+    /* LÓGICA DE EDIÇÃO DE TEXTO VISUAL (UX) */
+    [contenteditable="true"] {
+      transition: outline 0.2s, background 0.2s;
+    }
+    .export-container [contenteditable="true"]:hover {
+      outline: 2px dashed rgba(0,0,0,0.4);
+      cursor: text;
+    }
+    .export-container [contenteditable="true"]:focus {
+      outline: 2px dashed var(--primary);
+      background: rgba(255, 255, 255, 0.2);
+    }
+
     .post-header {
       background: #000;
       color: #fff;
@@ -182,7 +195,8 @@
 <body>
 
   <div class="control-panel">
-    <h2 class="font-head" style="text-align: center;"><i class="fas fa-camera-retro"></i> Post Generator v5.1</h2>
+    <h2 class="font-head" style="text-align: center;"><i class="fas fa-camera-retro"></i> Post Generator v5.2</h2>
+    <p style="text-align: center; font-size: 0.75rem; font-weight: bold; color: #666; margin-top: -10px;">Clique nos textos da imagem para editar diretamente!</p>
     
     <label style="font-weight: 900; font-size: 0.8rem;">TIPO DE POST:</label>
     <select id="post-type" onchange="switchMode()">
@@ -267,14 +281,14 @@
   <!-- WRAPPER 0.5: SENBATSU PYRAMID -->
   <div id="export-senbatsu-wrapper" class="export-container active-wrapper">
     <div class="post-header">
-      <div class="post-logo">MELANCHOLY<span>LOVE <i class="fas fa-heart"></i></span></div>
+      <div class="post-logo" contenteditable="true" spellcheck="false">MELANCHOLY<span>LOVE <i class="fas fa-heart"></i></span></div>
     </div>
     <div class="decor-x">X</div>
     <div class="post-content">
         <div style="text-align:center; margin-bottom: 20px;">
-            <span id="sb-tag" class="tag" style="background:var(--primary); color:#fff; font-weight:900; font-size:0.7rem; padding:4px 10px; border:2px solid #000; letter-spacing: 1px;">SENBATSU FORMATION</span>
-            <h2 id="sb-title" class="font-head" style="font-size:2.2rem; line-height:1; color:#000; margin-top:8px;">Nome da Música</h2>
-            <p id="sb-album" style="font-weight:900; text-transform:uppercase; font-size:0.85rem; color:#666;"></p>
+            <span id="sb-tag" class="tag" style="background:var(--primary); color:#fff; font-weight:900; font-size:0.7rem; padding:4px 10px; border:2px solid #000; letter-spacing: 1px;" contenteditable="true" spellcheck="false">SENBATSU FORMATION</span>
+            <h2 id="sb-title" class="font-head" style="font-size:2.2rem; line-height:1; color:#000; margin-top:8px;" contenteditable="true" spellcheck="false">Nome da Música</h2>
+            <p id="sb-album" style="font-weight:900; text-transform:uppercase; font-size:0.85rem; color:#666;" contenteditable="true" spellcheck="false"></p>
         </div>
         
         <div class="box-panel" style="background: #1a1a1a; border-color: var(--primary); padding: 30px 10px; box-shadow: 6px 6px 0 var(--primary);">
@@ -288,25 +302,25 @@
   <!-- WRAPPER 0: ANÚNCIO DE SINGLE -->
   <div id="export-single-ann-wrapper" class="export-container">
     <div class="post-header">
-      <div class="post-logo">MELANCHOLY<span>LOVE <i class="fas fa-heart"></i></span></div>
+      <div class="post-logo" contenteditable="true" spellcheck="false">MELANCHOLY<span>LOVE <i class="fas fa-heart"></i></span></div>
     </div>
     
     <div class="decor-x">X</div>
     <div class="decor-cd"><i class="fas fa-compact-disc"></i></div>
 
     <div class="post-content" style="align-items: center; text-align: center; justify-content: center; min-height: 420px; padding-top: 30px;">
-      <div id="sa-tag" class="post-tag" style="font-size: 1.1rem; margin-bottom: 20px; transform: rotate(-2deg); padding: 5px 15px;">NOVO LANÇAMENTO</div>
+      <div id="sa-tag" class="post-tag" style="font-size: 1.1rem; margin-bottom: 20px; transform: rotate(-2deg); padding: 5px 15px;" contenteditable="true" spellcheck="false">NOVO LANÇAMENTO</div>
       <img id="sa-cover" src="" crossorigin="anonymous" style="width: 240px; height: 240px; object-fit: cover; border: 6px solid var(--primary); box-shadow: 12px 12px 0 #000; margin-bottom: 20px; background: #000;">
-      <h2 id="sa-title" class="font-head" style="font-size: 2.2rem; line-height: 1.1; color: #000; margin-bottom: 15px; text-transform: uppercase;">TITULO</h2>
-      <p id="sa-msg" style="font-weight: 700; font-size: 0.95rem; max-width: 85%; margin-bottom: 20px; background: #fff; border: var(--border-dashed); padding: 10px;"></p>
-      <div id="sa-date" style="background: #000; color: var(--primary); font-weight: 900; font-size: 1.3rem; padding: 10px 25px; border: 4px solid var(--primary); text-transform: uppercase; box-shadow: 4px 4px 0 #000; transform: rotate(1deg);">EM BREVE</div>
+      <h2 id="sa-title" class="font-head" style="font-size: 2.2rem; line-height: 1.1; color: #000; margin-bottom: 15px; text-transform: uppercase;" contenteditable="true" spellcheck="false">TITULO</h2>
+      <p id="sa-msg" style="font-weight: 700; font-size: 0.95rem; max-width: 85%; margin-bottom: 20px; background: #fff; border: var(--border-dashed); padding: 10px;" contenteditable="true" spellcheck="false"></p>
+      <div id="sa-date" style="background: #000; color: var(--primary); font-weight: 900; font-size: 1.3rem; padding: 10px 25px; border: 4px solid var(--primary); text-transform: uppercase; box-shadow: 4px 4px 0 #000; transform: rotate(1deg);" contenteditable="true" spellcheck="false">EM BREVE</div>
     </div>
   </div>
 
   <!-- WRAPPER 1: POST PADRÃO (MEMBROS, DISCO PADRÃO, NEWS) -->
   <div id="export-wrapper" class="export-container">
     <div class="post-header">
-      <div class="post-logo">MELANCHOLY<span>LOVE <i class="fas fa-heart"></i></span></div>
+      <div class="post-logo" contenteditable="true" spellcheck="false">MELANCHOLY<span>LOVE <i class="fas fa-heart"></i></span></div>
     </div>
     <div class="decor-x">X</div>
     <div class="decor-skull"><i class="fas fa-skull"></i></div>
@@ -316,17 +330,17 @@
         <div class="post-idol-box">
           <img id="p-avatar" class="post-avatar" src="" crossorigin="anonymous">
           <div>
-            <h2 id="p-name" class="font-head post-name">Nome</h2>
-            <div id="p-unit" class="post-tag">Unit</div>
+            <h2 id="p-name" class="font-head post-name" contenteditable="true" spellcheck="false">Nome</h2>
+            <div id="p-unit" class="post-tag" contenteditable="true" spellcheck="false">Unit</div>
           </div>
         </div>
         <div style="display:flex; gap:15px;">
           <div class="box-panel" style="flex:1;">
-            <h4 class="font-head box-title"><i class="fas fa-history"></i> Histórico</h4>
+            <h4 class="font-head box-title" contenteditable="true" spellcheck="false"><i class="fas fa-history"></i> Histórico</h4>
             <div id="p-history"></div>
           </div>
           <div class="box-panel" style="flex:1; padding:10px;">
-            <h4 class="font-head box-title"><i class="fas fa-music"></i> Músicas</h4>
+            <h4 class="font-head box-title" contenteditable="true" spellcheck="false"><i class="fas fa-music"></i> Músicas</h4>
             <div id="p-songs"></div>
           </div>
         </div>
@@ -335,22 +349,22 @@
       <div id="view-disco-standard" class="export-view">
         <div class="disco-cover-wrapper">
           <img id="d-cover" class="disco-cover" src="" crossorigin="anonymous">
-          <h2 id="d-title" class="font-head post-name" style="margin-top:10px;">Titulo</h2>
+          <h2 id="d-title" class="font-head post-name" style="margin-top:10px;" contenteditable="true" spellcheck="false">Titulo</h2>
           <div id="d-tags"></div>
         </div>
         <div class="box-panel">
-          <h4 class="font-head box-title"><i class="fas fa-list"></i> Tracklist / Formação</h4>
+          <h4 class="font-head box-title" contenteditable="true" spellcheck="false"><i class="fas fa-list"></i> Tracklist / Formação</h4>
           <div id="d-tracklist"></div>
         </div>
       </div>
 
       <div id="view-news" class="export-view">
         <div class="news-modal">
-          <h2 id="n-title" class="font-head news-title">TÍTULO DA NOTÍCIA</h2>
-          <div id="n-text" class="news-text">Conteúdo da notícia...</div>
+          <h2 id="n-title" class="font-head news-title" contenteditable="true" spellcheck="false">TÍTULO DA NOTÍCIA</h2>
+          <div id="n-text" class="news-text" contenteditable="true" spellcheck="false">Conteúdo da notícia...</div>
           <div class="news-meta">
-            <span id="n-cat" class="post-tag" style="float:left; margin:0;">CATEGORIA</span>
-            <span id="n-date">00/00/0000</span>
+            <span id="n-cat" class="post-tag" style="float:left; margin:0;" contenteditable="true" spellcheck="false">CATEGORIA</span>
+            <span id="n-date" contenteditable="true" spellcheck="false">00/00/0000</span>
           </div>
         </div>
       </div>
@@ -360,17 +374,17 @@
   <!-- WRAPPER 2: POST DE FORMAÇÃO DE MÚSICA (GRID) -->
   <div id="export-formation-wrapper" class="export-container">
     <div class="post-header">
-      <div class="post-logo">MELANCHOLY<span>LOVE <i class="fas fa-heart"></i></span></div>
+      <div class="post-logo" contenteditable="true" spellcheck="false">MELANCHOLY<span>LOVE <i class="fas fa-heart"></i></span></div>
     </div>
     <div class="decor-x">X</div>
     <div class="post-content">
         <div style="text-align:center; margin-bottom: 20px;">
-            <span id="df-album-tag" class="tag" style="background:var(--primary); color:#fff; font-weight:900; font-size:0.7rem; padding:2px 8px; border:2px solid #000;">ALBUM</span>
-            <h2 id="df-track-title" class="font-head" style="font-size:2.2rem; line-height:1; color:#000; margin-top:5px;">Nome da Música</h2>
-            <p id="df-kind" style="font-weight:900; text-transform:uppercase; font-size:0.8rem; color:#666;"></p>
+            <span id="df-album-tag" class="tag" style="background:var(--primary); color:#fff; font-weight:900; font-size:0.7rem; padding:2px 8px; border:2px solid #000;" contenteditable="true" spellcheck="false">ALBUM</span>
+            <h2 id="df-track-title" class="font-head" style="font-size:2.2rem; line-height:1; color:#000; margin-top:5px;" contenteditable="true" spellcheck="false">Nome da Música</h2>
+            <p id="df-kind" style="font-weight:900; text-transform:uppercase; font-size:0.8rem; color:#666;" contenteditable="true" spellcheck="false"></p>
         </div>
         <div class="box-panel">
-            <h4 class="font-head box-title"><i class="fas fa-users"></i> Formação de Membros</h4>
+            <h4 class="font-head box-title" contenteditable="true" spellcheck="false"><i class="fas fa-users"></i> Formação de Membros</h4>
             <div id="df-member-grid" class="formation-member-grid"></div>
         </div>
     </div>
@@ -379,13 +393,13 @@
   <!-- WRAPPER 3: POST DE VISÃO GERAL DE GRUPO/UNIT -->
   <div id="export-group-wrapper" class="export-container">
     <div class="post-header">
-      <div class="post-logo">MELANCHOLY<span>LOVE <i class="fas fa-heart"></i></span></div>
+      <div class="post-logo" contenteditable="true" spellcheck="false">MELANCHOLY<span>LOVE <i class="fas fa-heart"></i></span></div>
     </div>
     <div class="decor-x">X</div>
     <div class="post-content">
         <div style="text-align:center; margin-bottom: 20px;">
-            <h2 id="dg-title" class="font-head" style="font-size:2.4rem; line-height:1; color:#000; margin-top:5px;">Melancholy Love</h2>
-            <p id="dg-sub" class="post-tag" style="margin-top: 10px;">Todas as Membros</p>
+            <h2 id="dg-title" class="font-head" style="font-size:2.4rem; line-height:1; color:#000; margin-top:5px;" contenteditable="true" spellcheck="false">Melancholy Love</h2>
+            <p id="dg-sub" class="post-tag" style="margin-top: 10px;" contenteditable="true" spellcheck="false">Todas as Membros</p>
         </div>
         <div class="box-panel">
             <div id="dg-member-grid" class="formation-member-grid"></div>
@@ -513,7 +527,7 @@
         // Esconde todos os wrappers
         document.querySelectorAll('.export-container').forEach(el => el.classList.remove('active-wrapper'));
 
-        // Lógica segura de ativação (sem referências circulares)
+        // Lógica segura de ativação
         if(mode === 'senbatsu') {
             document.getElementById('export-senbatsu-wrapper').classList.add('active-wrapper');
             handleSenbatsuSelectionChange(); 
@@ -557,13 +571,13 @@
         
         if(unitStr === 'Melancholy') {
             themeColor = '#8A2BE2'; themeLight = '#D8BFD8';
-            logoDiv.innerHTML = '<span>MELANCHOLY <i class="fas fa-skull"></i></span>';
+            logoDiv.innerHTML = '<span contenteditable="true" spellcheck="false">MELANCHOLY <i class="fas fa-skull"></i></span>';
         } else if (unitStr === 'Love') {
             themeColor = '#E60000'; themeLight = '#FFCCCC';
-            logoDiv.innerHTML = '<span>LOVE <i class="fas fa-heart"></i></span>';
+            logoDiv.innerHTML = '<span contenteditable="true" spellcheck="false">LOVE <i class="fas fa-heart"></i></span>';
         } else {
             themeColor = '#FF69B4'; themeLight = '#FFB6C1';
-            logoDiv.innerHTML = 'MELANCHOLY<span>LOVE <i class="fas fa-heart"></i></span>';
+            logoDiv.innerHTML = 'MELANCHOLY<span contenteditable="true" spellcheck="false">LOVE <i class="fas fa-heart"></i></span>';
         }
         
         root.style.setProperty('--primary', themeColor);
@@ -643,10 +657,11 @@
                 rows.push({ type: 'front', members: others });
             }
 
-            // Inserir Center(s) no meio da primeira fileira (front)
+            // Inserir Center(s) PERFEITAMENTE no meio da primeira fileira (front)
             let frontRow = rows[rows.length - 1];
             let fOthers = frontRow.members;
-            let midIndex = Math.floor(fOthers.length / 2);
+            // Math.ceil garante que ao inserir, o Center fica visualmente no meio (ex: no meio de 3, ou de 4)
+            let midIndex = Math.ceil(fOthers.length / 2); 
             fOthers.splice(midIndex, 0, ...centers);
             frontRow.members = fOthers;
 
@@ -661,7 +676,7 @@
                         <div class="s-card ${m.isCenter ? 'center' : ''}">
                             ${m.isCenter ? '<div class="s-center-badge"><i class="fas fa-crown"></i></div>' : ''}
                             <img src="${photoUrl}" crossorigin="anonymous">
-                            <div class="s-name">${m.name}</div>
+                            <div class="s-name" contenteditable="true" spellcheck="false">${m.name}</div>
                         </div>
                     `;
                 }).join('');
@@ -737,7 +752,7 @@
 
         const histEl = document.getElementById("p-history");
         if(th.length === 0) histEl.innerHTML = `<div style="font-weight:bold;">Ainda construindo sua história.</div>`;
-        else histEl.innerHTML = th.map(h => `<div class="t-item"><span class="t-date">${h.data}</span><br>${h.para}</div>`).join('');
+        else histEl.innerHTML = th.map(h => `<div class="t-item"><span class="t-date" contenteditable="true" spellcheck="false">${h.data}</span><br><span contenteditable="true" spellcheck="false">${h.para}</span></div>`).join('');
 
         let partsHTML = "";
         const cleanMName = (m.nome||'').replace(/<[^>]*>?/gm, '').trim();
@@ -766,10 +781,10 @@
                         partsHTML += `
                             <div style="margin-bottom: 8px; border-bottom: 1px dashed #ccc; padding-bottom: 5px;">
                                 <div style="margin-bottom: 4px;">
-                                    <span style="background:${unitBadgeColor}; color:${unitTextColor}; font-size:0.55rem; padding:2px 5px; border: 1px solid #000; font-weight:900; text-transform:uppercase;">${unitBadgeText}</span>
-                                    <span class="song-tag ${isCenter}" style="font-size:0.55rem;">${track.kind || 'Track'}</span>
+                                    <span style="background:${unitBadgeColor}; color:${unitTextColor}; font-size:0.55rem; padding:2px 5px; border: 1px solid #000; font-weight:900; text-transform:uppercase;" contenteditable="true" spellcheck="false">${unitBadgeText}</span>
+                                    <span class="song-tag ${isCenter}" style="font-size:0.55rem;" contenteditable="true" spellcheck="false">${track.kind || 'Track'}</span>
                                 </div>
-                                <div style="font-weight: 700; font-size: 0.85rem; padding-left:2px;">${track.name}</div>
+                                <div style="font-weight: 700; font-size: 0.85rem; padding-left:2px;" contenteditable="true" spellcheck="false">${track.name}</div>
                             </div>`;
                     }
                 });
@@ -818,7 +833,7 @@
                 return `
                     <div class="fm-card">
                         <img src="${photoUrl}" crossorigin="anonymous">
-                        <div class="fm-name">${m.nome}</div>
+                        <div class="fm-name" contenteditable="true" spellcheck="false">${m.nome}</div>
                     </div>
                 `;
             }).join('');
@@ -827,12 +842,12 @@
         }
     }
 
-    // --- DISCO LOGIC (Seguro contra loopings) ---
+    // --- DISCO LOGIC ---
     function handleDiscoSelectionChange() {
         populateDiscoTracks();
         document.getElementById("disco-view-type").value = "standard";
         
-        // Ajusta as telas diretamente sem chamar switchMode()
+        // Ajusta as telas diretamente
         document.querySelectorAll('.export-container').forEach(el => el.classList.remove('active-wrapper'));
         document.getElementById('export-wrapper').classList.add('active-wrapper');
         document.querySelectorAll('#export-wrapper .export-view').forEach(el => el.classList.remove('active'));
@@ -842,7 +857,6 @@
     }
 
     function switchDiscoView() { 
-        // Apenas alterna as telas do disco sem chamar o switchMode() completo
         const viewType = document.getElementById("disco-view-type").value;
         document.querySelectorAll('.export-container').forEach(el => el.classList.remove('active-wrapper'));
         
@@ -869,7 +883,7 @@
 
         document.getElementById("d-cover").src = resolveImage(d.capa);
         document.getElementById("d-title").innerHTML = d.titulo;
-        document.getElementById("d-tags").innerHTML = `<span class="post-tag" style="background:#000; color:${themeCol}; border-color:${themeCol}">${d.tipo}</span>`;
+        document.getElementById("d-tags").innerHTML = `<span class="post-tag" style="background:#000; color:${themeCol}; border-color:${themeCol}" contenteditable="true" spellcheck="false">${d.tipo}</span>`;
 
         let trackHTML = "Sem dados de tracklist (ctl48 JSON faltando).";
         if (Array.isArray(currentTracklistData)) {
@@ -877,7 +891,7 @@
                 let centerStr = "";
                 const center = (t.members || []).find(m => m.isCenter);
                 if(center) centerStr = `<span style="font-size:0.7rem; color:#666;">(C: ${center.name})</span>`;
-                return `<div class="track-row"><span>${t.name} ${centerStr}</span> <span class="song-tag">${t.kind}</span></div>`;
+                return `<div class="track-row"><span contenteditable="true" spellcheck="false">${t.name} ${centerStr}</span> <span class="song-tag" contenteditable="true" spellcheck="false">${t.kind}</span></div>`;
             }).join('');
         }
         document.getElementById("d-tracklist").innerHTML = trackHTML;
@@ -906,7 +920,15 @@
         grid.innerHTML = "";
 
         if(Array.isArray(track.members)) {
-            track.members.forEach(mInTrack => {
+            // Lógica para colocar o Center perfeitamente no Meio do Grid
+            let membersCopy = [...track.members];
+            let centers = membersCopy.filter(m => m.isCenter);
+            let others = membersCopy.filter(m => !m.isCenter);
+            
+            let midIndex = Math.ceil(others.length / 2);
+            others.splice(midIndex, 0, ...centers);
+
+            others.forEach(mInTrack => {
                 const cleanMName = mInTrack.name.replace(/<[^>]*>?/gm, '').trim();
                 const fullMemData = loadedMembers.find(x => (x.nome||'').replace(/<[^>]*>?/gm, '').trim() === cleanMName);
                 const photoUrl = fullMemData ? resolveImage(fullMemData.foto) : pImg(mInTrack.name, unit);
@@ -916,7 +938,7 @@
                     <div class="fm-card ${isCenter ? 'center' : ''}">
                         ${isCenter ? '<div class="center-badge"><i class="fas fa-crown"></i></div>' : ''}
                         <img src="${photoUrl}" crossorigin="anonymous">
-                        <div class="fm-name">${mInTrack.name}</div>
+                        <div class="fm-name" contenteditable="true" spellcheck="false">${mInTrack.name}</div>
                     </div>
                 `;
             });
@@ -952,6 +974,9 @@
     }
 
     function downloadPost() {
+        // Tira o foco ativo para não renderizar as bordas pontilhadas de edição
+        if (document.activeElement) { document.activeElement.blur(); }
+
         const postMode = document.getElementById("post-type").value;
         
         let wrapperId = "export-wrapper";
@@ -991,6 +1016,7 @@
         const originalTransform = wrapper.style.transform;
         wrapper.style.transform = "scale(1)"; 
         
+        // Aguarda limpar o estilo e depois renderiza
         setTimeout(() => {
             html2canvas(wrapper, {
                 scale: 2, 
@@ -1011,7 +1037,7 @@
                 alert("Erro ao gerar a imagem.");
                 btn.innerHTML = '<i class="fas fa-download"></i> Baixar Imagem Ativa (PNG)';
             });
-        }, 100);
+        }, 150);
     }
 
     init();
